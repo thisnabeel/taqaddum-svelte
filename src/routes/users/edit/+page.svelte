@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import AvatarPicker from '$lib/components/Avatar/Picker.svelte';
+	import AvatarPicker from '$lib/components/Avatar/AvatarPicker.svelte';
 	import API from '$lib/api/api';
 	import { user } from '$lib/stores/user';
 	import Search from '$lib/components/Skills/Search.svelte';
@@ -76,7 +76,7 @@
 		{/if}
 
 		<!-- Avatar Upload Component -->
-		<AvatarPicker bind:avatar bind:avatarPreview />
+		<AvatarPicker />
 
 		<div class="mb-3">
 			<label class="form-label">First Name</label>
