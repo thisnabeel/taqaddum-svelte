@@ -1,0 +1,26 @@
+a.clean {
+	text-decoration: none;
+}
+
+.clean-list {
+	list-style: none;
+	padding: 0;
+}
+
+.blocky {
+	position: absolute;
+	top: 36px;
+	z-index: 9999;
+	width: 100%;
+	background: #fff;
+}
+
+ul.blocky li {
+	padding: 6px;
+	border: 1px solid #000;
+	font-weight: bold;
+}
+
+.relative {
+	position: relative;
+}
