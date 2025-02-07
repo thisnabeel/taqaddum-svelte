@@ -54,6 +54,8 @@
 			'Content-Type': 'multipart/form-data'
 		});
 		console.log({ res });
+		user.set(res);
+		modals.close();
 	}
 
 	function reset() {

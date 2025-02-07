@@ -3,12 +3,13 @@
 </script>
 
 <div class="mentor-card">
-	<img src={mentor.avatar} alt={mentor.first_name + ' ' + mentor.last_name} />
+	<img src={mentor.avatar_cropped_url} alt={mentor.first_name + ' ' + mentor.last_name} />
 	<div class="info">
 		<h3>{mentor.first_name} {mentor.last_name}</h3>
 		<p>{mentor.profession}</p>
-		<hr />
-		<ul class="clean-list">
+
+		<b> Mentoring: </b>
+		<ul class="clean-list skills">
 			{#each mentor.mentorships as mentorship}
 				<li>{mentorship.skill.title}</li>
 			{/each}
@@ -17,6 +18,14 @@
 </div>
 
 <style>
+	.skills li {
+		font-size: 1.2rem;
+		padding: 0.5rem 1rem;
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		white-space: nowrap;
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	}
 	.mentor-card {
 		background: white;
 		border-radius: 10px;

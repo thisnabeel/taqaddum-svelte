@@ -13,7 +13,7 @@
 <div class="avatar" style="position:relative; width:max-content">
 	<img
 		style="width: 150px"
-		src={$avatar_cropped_blob_url || avatar_cropped_url}
+		src={($user && $user.avatar_cropped_url) || $avatar_cropped_blob_url || avatar_cropped_url}
 		alt=""
 		class="avatar"
 	/>
