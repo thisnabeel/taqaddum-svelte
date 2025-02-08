@@ -1,10 +1,13 @@
 <script>
 	import API from '$lib/api/api';
+	import { DateTime } from 'luxon';
 
 	export let offering;
 	export let mentorships;
 	export let index;
 	export let removeOffering;
+	export let readOnly = true;
+	export let slotDetails;
 
 	let editing = false;
 
@@ -29,11 +32,26 @@
 		}
 	}
 
+	function formatMeetupTimeLuxon(meetup) {
+		const start = DateTime.fromISO(meetup.start_time).setZone('America/Los_Angeles');
+		const end = DateTime.fromISO(meetup.end_time).setZone('America/Los_Angeles');
+
+		return `${start.toFormat('EEE, MMM d @ h:mm a')} - ${end.toFormat('h:mm a')}`;
+	}
+
 	async function saveChanges() {
+		let response = null;
 		try {
-			const response = await API.put(`/meeting_offerings/${offering.id}`, {
-				meeting_offering: offering
-			});
+			if (offering.id < 1) {
+				offering.id = null;
+				response = await API.post(`/meeting_offerings`, {
+					meeting_offering: offering
+				});
+			} else {
+				response = await API.put(`/meeting_offerings/${offering.id}`, {
+					meeting_offering: offering
+				});
+			}
 
 			if (response) {
 				editing = false;
@@ -63,7 +81,13 @@
 <li class:editing>
 	<div class="content">
 		{#if editing}
-			<select name="" id="" bind:value={offering.mentorship_id}>
+			<select
+				name=""
+				id=""
+				bind:value={offering.mentorship_id}
+				on:change={() => console.log(offering)}
+			>
+				<option value={null}></option>
 				{#each mentorships as mentorship}
 					<option value={mentorship.id}>{mentorship.skill.title}</option>
 				{/each}
@@ -107,9 +131,19 @@
 				{/each}
 				<span class="yellow"> minutes </span>
 			</small>
+		{:else if slotDetails}
+			<small class="flex" style="align-items: baseline;">
+				<div class="flex-70 flex-grow">
+					<b class="">
+						{formatMeetupTimeLuxon(slotDetails)}
+					</b>
+				</div>
+
+				<div class="btn btn-outline-primary flex-30 flex-grow">Book Now</div>
+			</small>
 		{:else}
 			<small style="display:block;">
-				Duration:
+				Duration Per Session:
 				<span class="yellow">
 					{offering.duration}
 					minutes
@@ -118,23 +152,25 @@
 		{/if}
 	</div>
 
-	<div class="actions">
-		{#if editing}
-			<button on:click={saveChanges}>
-				<i class="fa fa-save"></i>
-			</button>
-			<button on:click={() => (editing = false)} class="cancel">
-				<i class="fa fa-times"></i>
-			</button>
-		{:else}
-			<button on:click={() => (editing = true)}>
-				<i class="fa fa-edit"></i>
-			</button>
-			<button on:click={() => deleteMeetingOffering(offering.id)} class="delete">
-				<i class="fa fa-trash"></i>
-			</button>
-		{/if}
-	</div>
+	{#if !readOnly}
+		<div class="actions">
+			{#if editing}
+				<button on:click={saveChanges}>
+					<i class="fa fa-save"></i>
+				</button>
+				<button on:click={() => (editing = false)} class="cancel">
+					<i class="fa fa-times"></i>
+				</button>
+			{:else}
+				<button on:click={() => (editing = true)}>
+					<i class="fa fa-edit"></i>
+				</button>
+				<button on:click={() => deleteMeetingOffering(offering.id)} class="delete">
+					<i class="fa fa-trash"></i>
+				</button>
+			{/if}
+		</div>
+	{/if}
 </li>
 
 <style>

@@ -4,7 +4,11 @@
 	import API from '$lib/api/api';
 	import { user } from '$lib/stores/user';
 	import { modals } from 'svelte-modals';
-	import { avatar_cropped_blob_url } from '$lib/stores/signingUpStore';
+	import {
+		avatar_cropped_blob_url,
+		avatar_original,
+		avatar_cropped
+	} from '$lib/stores/signingUpStore';
 
 	let crop = { x: 0, y: 0 };
 	let zoom = 1;
@@ -42,6 +46,10 @@
 		if (signingUp) {
 			const base64 = await blobToURL(croppedImage);
 			avatar_cropped_blob_url.set(base64);
+			avatar_cropped.set(croppedImage);
+			avatar_original.set(imageFile);
+			console.log($avatar_cropped);
+			console.log($avatar_original);
 			modals.close();
 			return;
 		}

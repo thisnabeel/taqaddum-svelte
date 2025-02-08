@@ -125,7 +125,7 @@
 		<br /><br />
 		<ul class="offerings">
 			{#each meetingOfferings as offering}
-				<Offering {offering} {mentorships} {removeOffering}></Offering>
+				<Offering {offering} {mentorships} {removeOffering} readOnly={false}></Offering>
 			{/each}
 		</ul>
 	{/if}

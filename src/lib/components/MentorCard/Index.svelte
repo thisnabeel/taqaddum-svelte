@@ -2,7 +2,7 @@
 	export let mentor;
 </script>
 
-<div class="mentor-card">
+<a class="mentor-card clean" href="/mentors/{mentor.id}">
 	<img src={mentor.avatar_cropped_url} alt={mentor.first_name + ' ' + mentor.last_name} />
 	<div class="info">
 		<h3>{mentor.first_name} {mentor.last_name}</h3>
@@ -15,7 +15,7 @@
 			{/each}
 		</ul>
 	</div>
-</div>
+</a>
 
 <style>
 	.skills li {

@@ -106,7 +106,15 @@
 		<div class="mb-3">
 			<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
 			{#each mentorSkills as skill, index}
-				<Search placeholder="Search Expertise..." bind:selectedValue={mentorSkills[index]}></Search>
+				<div class="flex">
+					<div class="flex-grow flex-90">
+						<Search placeholder="Search Expertise..." bind:selectedValue={mentorSkills[index]}
+						></Search>
+					</div>
+					<div class="flex-grow flex-10 btn">
+						<i class="fa fa-expand"></i>
+					</div>
+				</div>
 			{/each}
 		</div>
 

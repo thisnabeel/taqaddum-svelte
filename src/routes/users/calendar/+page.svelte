@@ -3,6 +3,7 @@
 	import { user } from '$lib/stores/user';
 	import { onMount } from 'svelte';
 	import { DateTime as Luxon } from 'luxon';
+	import { DateTime } from 'luxon';
 
 	let current_user = { id: null };
 	let loading = true;
@@ -156,28 +157,28 @@
 		return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 	}
 
-	import { DateTime } from 'luxon';
-
 	function formatTimeSlot(slot, userTimezone = 'America/Los_Angeles') {
 		const [time, period] = slot.split(' ');
 		let [hours, minutes] = time.split(':').map(Number);
 
+		// ✅ Fix AM/PM Conversion
 		if (period === 'PM' && hours !== 12) hours += 12;
 		if (period === 'AM' && hours === 12) hours = 0;
 
-		// Create a Luxon DateTime in the user's local timezone
-		let localDate = Luxon.fromObject({ hour: hours, minute: minutes }, { zone: userTimezone });
+		// ✅ Create a DateTime in user's timezone
+		let localDate = DateTime.fromObject({ hour: hours, minute: minutes }, { zone: userTimezone });
 
-		// Convert it to UTC
+		// ✅ Convert to UTC before saving
 		let utcDate = localDate.toUTC();
 
 		console.log({
-			localDate: localDate.toString(),
-			utcDate: utcDate.toString(),
+			selectedTime: slot,
+			localDate: localDate.toFormat('EEE, MMM d @ h:mm a ZZZZ'),
+			utcDate: utcDate.toFormat('EEE, MMM d @ h:mm a ZZZZ'),
 			utcISO: utcDate.toISO()
 		});
 
-		return utcDate.toISO(); // Correctly formatted UTC timestamp
+		return utcDate.toISO(); // Store in ISO UTC format
 	}
 
 	function convertToSortableTime(time) {
@@ -199,7 +200,7 @@
 			<!-- Accordion Header -->
 			<div class="accordion" on:click={() => toggleAccordion(day)}>
 				<span>{day}</span>
-				<span class="selected-slots">
+				<span class="selected-slots" class:empty={availability[day].length < 1}>
 					{#if availability[day].length > 0}
 						{availability[day]
 							.slice() // Clone array to avoid mutating the original
@@ -233,6 +234,9 @@
 </div>
 
 <style>
+	.selected-slots.empty {
+		color: #ccc;
+	}
 	.availability-container {
 		max-width: 600px;
 		margin: auto;
@@ -267,7 +271,7 @@
 
 	.slots-container {
 		max-height: 0;
-		overflow: hidden;
+		overflow-y: scroll;
 		transition:
 			max-height 0.3s ease-out,
 			padding 0.3s ease-out;

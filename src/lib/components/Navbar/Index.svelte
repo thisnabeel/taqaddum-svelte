@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { user } from '$lib/stores/user';
+	import { user, userView } from '$lib/stores/user';
 
 	export let logo = 'Taqaddum';
 
@@ -22,10 +22,28 @@
 	<!-- Nav Links (Hidden in Mobile by Default) -->
 	<ul class="nav-links {menuOpen ? 'open' : ''}">
 		{#if $user}
-			<li><a href="#">Suggestions</a></li>
-			<li><a href="/users/offerings"><i class="fa fa-university"></i> My Offerings</a></li>
-			<li><a href="/users/calendar"><i class="fa fa-calendar"></i> My Availability</a></li>
+			<li class="mobile-user">
+				<!-- <button
+					class="btn"
+					on:click={() => userView.set($userView === 'mentor' ? 'mentee' : 'mentor')}
+					>Mentee <i
+						class="fa"
+						class:fa-toggle-on={$userView === 'mentor'}
+						class:fa-toggle-off={$userView === 'mentee'}
+					></i> Mentor</button
+				> -->
+			</li>
+			{#if $userView === 'mentor'}
+				<li><a href="/users/offerings"><i class="fa fa-university"></i> My Offerings +</a></li>
+				<li><a href="/users/calendar"><i class="fa fa-calendar"></i> My Availability =</a></li>
+				<li><a href="/users/slots"><i class="fa fa-lightbulb-o"></i> Generated Slots</a></li>
+			{:else if $userView === 'mentee'}
+				<li><a href="/users/calendar"><i class="fa fa-calendar"></i> My Availability</a></li>
+				<li><a href="/users/slots"><i class="fa fa-lightbulb-o"></i> Recommended Sessions</a></li>
+			{/if}
+
 			<!-- Show user's name & sign out inside mobile dropdown -->
+
 			<li class="mobile-user">
 				<span on:click={() => goto('/users/edit')}>{$user.first_name} {$user.last_name}</span>
 				<button class="signout" on:click={() => user.set(null)}>
@@ -48,6 +66,16 @@
 			<button class="login" on:click={() => goto('/users/sign_in')}>Log In</button>
 			<a class="signup clean" on:click={() => goto('/users/sign_up')}>Get Started</a>
 		{:else}
+			<!-- <button
+				class="btn"
+				on:click={() => userView.set($userView === 'mentor' ? 'mentee' : 'mentor')}
+				>Mentee <i
+					class="fa"
+					class:fa-toggle-on={$userView === 'mentor'}
+					class:fa-toggle-off={$userView === 'mentee'}
+				></i> Mentor</button
+			> -->
+
 			<button class="btn" on:click={() => goto('/users/edit')}
 				>{$user.first_name} {$user.last_name}</button
 			>

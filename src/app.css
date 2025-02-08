@@ -1,5 +1,31 @@
+.flex {
+	display: flex;
+}
+
+.flex-grow {
+	flex: 1 1 var(--flex-size, 100%);
+}
+
+/* Set predefined sizes */
+.flex-10 {
+	--flex-size: 10%;
+}
+.flex-30 {
+	--flex-size: 30%;
+}
+.flex-50 {
+	--flex-size: 50%;
+}
+.flex-70 {
+	--flex-size: 70%;
+}
+.flex-90 {
+	--flex-size: 90%;
+}
+
 a.clean {
 	text-decoration: none;
+	color: initial;
 }
 
 .clean-list {

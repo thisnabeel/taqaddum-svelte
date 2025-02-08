@@ -21,6 +21,8 @@
 		selectedValue = skill;
 		results = [];
 	}
+
+	$: selectedValue ? (searchInput = selectedValue.title) : '';
 </script>
 
 <div class="relative">
