@@ -5,11 +5,16 @@
 	export let logo = 'Taqaddum';
 
 	let menuOpen = false;
+
+	function visit(link) {
+		goto(link);
+		menuOpen = !menuOpen;
+	}
 </script>
 
 <nav class="navbar">
 	<div class="left">
-		<div class="logo" on:click={() => goto('/')}>
+		<div class="logo" on:click={() => visit('/')}>
 			<img src="/logo-icon.png" alt="Logo" />
 		</div>
 
@@ -22,38 +27,47 @@
 	<!-- Nav Links (Hidden in Mobile by Default) -->
 	<ul class="nav-links {menuOpen ? 'open' : ''}">
 		{#if $user}
-			<li class="mobile-user">
-				<!-- <button
-					class="btn"
-					on:click={() => userView.set($userView === 'mentor' ? 'mentee' : 'mentor')}
-					>Mentee <i
-						class="fa"
-						class:fa-toggle-on={$userView === 'mentor'}
-						class:fa-toggle-off={$userView === 'mentee'}
-					></i> Mentor</button
-				> -->
-			</li>
 			{#if $userView === 'mentor'}
-				<li><a href="/users/offerings"><i class="fa fa-university"></i> My Offerings +</a></li>
-				<li><a href="/users/calendar"><i class="fa fa-calendar"></i> My Availability =</a></li>
-				<li><a href="/users/slots"><i class="fa fa-lightbulb-o"></i> Generated Slots</a></li>
+				<li>
+					<a href="/users/offerings" on:click={() => (menuOpen = false)}
+						><i class="fa fa-university"></i> My Offerings +</a
+					>
+				</li>
+				<li>
+					<a href="/users/calendar" on:click={() => (menuOpen = false)}
+						><i class="fa fa-calendar"></i> My Availability =</a
+					>
+				</li>
+				<li>
+					<a href="/users/slots" on:click={() => (menuOpen = false)}
+						><i class="fa fa-lightbulb-o"></i> Generated Slots</a
+					>
+				</li>
 			{:else if $userView === 'mentee'}
-				<li><a href="/users/calendar"><i class="fa fa-calendar"></i> My Availability</a></li>
-				<li><a href="/users/slots"><i class="fa fa-lightbulb-o"></i> Recommended Sessions</a></li>
+				<li>
+					<a href="/users/calendar" on:click={() => (menuOpen = false)}
+						><i class="fa fa-calendar"></i> My Availability</a
+					>
+				</li>
+				<li>
+					<a href="/users/slots" on:click={() => (menuOpen = false)}
+						><i class="fa fa-lightbulb-o"></i> Recommended Sessions</a
+					>
+				</li>
 			{/if}
 
 			<!-- Show user's name & sign out inside mobile dropdown -->
 
 			<li class="mobile-user">
-				<span on:click={() => goto('/users/edit')}>{$user.first_name} {$user.last_name}</span>
+				<span on:click={() => visit('/users/edit')}>{$user.first_name} {$user.last_name}</span>
 				<button class="signout" on:click={() => user.set(null)}>
 					<i class="fa fa-sign-out"></i> Sign Out
 				</button>
 			</li>
 		{:else}
 			<li class="mobile-user">
-				<button class="login" on:click={() => goto('/users/sign_in')}>Log In</button>
-				<a class="signup clean" style="color: #fff" on:click={() => goto('/users/sign_up')}
+				<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
+				<a class="signup clean" style="color: #fff" on:click={() => visit('/users/sign_up')}
 					>Get Started</a
 				>
 			</li>
@@ -63,8 +77,8 @@
 	<!-- Desktop Auth Buttons -->
 	<div class="auth-buttons">
 		{#if !$user}
-			<button class="login" on:click={() => goto('/users/sign_in')}>Log In</button>
-			<a class="signup clean" on:click={() => goto('/users/sign_up')}>Get Started</a>
+			<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
+			<a class="signup clean" on:click={() => visit('/users/sign_up')}>Get Started</a>
 		{:else}
 			<!-- <button
 				class="btn"
@@ -76,8 +90,10 @@
 				></i> Mentor</button
 			> -->
 
-			<button class="btn" on:click={() => goto('/users/edit')}
-				>{$user.first_name} {$user.last_name}</button
+			<button class="btn" on:click={() => visit('/users/edit')}>
+				<img src={$user.avatar_cropped_url} class="mentor-avatar" />
+				{$user.first_name}
+				{$user.last_name}</button
 			>
 			<button class="login" on:click={() => user.set(null)}>Sign Out</button>
 		{/if}
@@ -85,10 +101,19 @@
 </nav>
 
 <style>
+	.mentor-avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 4px solid white;
+		box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+	}
 	.navbar {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		/* align-items: center; */
+		align-items: baseline;
 		padding: 15px 20px;
 		background: white;
 		border-bottom: 1px solid #ddd;
