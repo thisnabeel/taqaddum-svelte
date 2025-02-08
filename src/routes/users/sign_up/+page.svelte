@@ -207,18 +207,18 @@
 				<div class="mb-3">
 					<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
 					{#each mentorSkills as skill, index}
-						<div class="flex">
+						<div
+							class="flex"
+							on:click={() => {
+								modals.open(SkillsModal, {
+									selectSkill: (payload) => selectSkill(payload, index)
+								});
+							}}
+						>
 							<div class="flex-grow flex-90">
-								<Search placeholder="Search Expertise..." bind:selectedValue={skill}></Search>
+								<Search placeholder="Select Expertise..." bind:selectedValue={skill}></Search>
 							</div>
-							<div
-								class="flex-grow flex-10 btn"
-								on:click={() => {
-									modals.open(SkillsModal, {
-										selectSkill: (payload) => selectSkill(payload, index)
-									});
-								}}
-							>
+							<div class="flex-grow flex-10 btn">
 								<i class="fa fa-expand"></i>
 							</div>
 						</div>
