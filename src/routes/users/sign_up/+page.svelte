@@ -216,7 +216,9 @@
 							}}
 						>
 							<div class="flex-grow flex-90">
-								<Search placeholder="Select Expertise..." bind:selectedValue={skill}></Search>
+								<div class="form-control" class:gray={!skill || !skill.title}>
+									{skill ? skill.title : 'Select Expertise...'}
+								</div>
 							</div>
 							<div class="flex-grow flex-10 btn">
 								<i class="fa fa-expand"></i>
@@ -267,5 +269,9 @@
 	.form-control:focus {
 		border-color: #0d6efd;
 		box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+	}
+
+	.gray {
+		background-color: #e4e4e4;
 	}
 </style>
