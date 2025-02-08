@@ -2,7 +2,6 @@
 	import ScrollingList from '../Skills/ScrollingList.svelte';
 	import Search from '../Skills/Search.svelte';
 
-	export let heading = 'Islamic Values, Professional Success.';
 	export let subtext =
 		"Get the kind of personalized advice you'd never find reading blog posts or watching courses.";
 </script>
@@ -11,7 +10,8 @@
 	<div class="text-center" style="width: 12em; display:inline-block;">
 		<img style="width:100%" src="/logo-taqaddum.png" alt="" />
 	</div>
-	<h1>{heading}</h1>
+
+	<h1 class="heading">Islamic Values, <span>Professional Success.</span></h1>
 	<p>{subtext}</p>
 
 	<div class="search-bar">
@@ -55,5 +55,11 @@
 		background: black;
 		color: white;
 		cursor: pointer;
+	}
+
+	@media (max-width: 768px) {
+		.heading span {
+			display: block;
+		}
 	}
 </style>

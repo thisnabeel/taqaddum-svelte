@@ -17,7 +17,7 @@
 
 <Hero />
 <section class="mentors">
-	<h1 class="text-center">Mentors:</h1>
+	<h1 class="text-center">Vetted Mentors:</h1>
 	<div class="list">
 		{#each mentors as mentor}
 			<MentorCard {mentor} />

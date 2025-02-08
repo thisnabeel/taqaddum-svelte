@@ -168,7 +168,7 @@
 		<div class="card shadow p-4" style="width: 400px;">
 			{#if formFor === 'Mentor'}
 				<h3 class="text-center mb-3">Apply for a {formFor} Account</h3>
-				<!-- <p>We will review your application and email you back.</p> -->
+				<p>We will review your application and email you back.</p>
 			{:else}
 				<h3 class="text-center mb-3">Create a {formFor} Account</h3>
 			{/if}

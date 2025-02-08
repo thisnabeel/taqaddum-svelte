@@ -8,20 +8,29 @@
 
 	function visit(link) {
 		goto(link);
-		menuOpen = !menuOpen;
+		menuOpen = false;
 	}
 </script>
 
 <nav class="navbar">
-	<div class="left">
-		<div class="logo" on:click={() => visit('/')}>
-			<img src="/logo-icon.png" alt="Logo" />
+	<div class="left flex">
+		<div>
+			<div class="logo" on:click={() => visit('/')}>
+				<img src="/logo-icon.png" alt="Logo" />
+			</div>
+
+			<!-- Hamburger Menu Toggle (Visible on Mobile) -->
+			<button class="hamburger" on:click={() => (menuOpen = !menuOpen)}>
+				<i class="fa fa-bars"></i>
+			</button>
 		</div>
 
-		<!-- Hamburger Menu Toggle (Visible on Mobile) -->
-		<button class="hamburger" on:click={() => (menuOpen = !menuOpen)}>
-			<i class="fa fa-bars"></i>
-		</button>
+		<div class="mobile-user">
+			<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
+			<a class="signup clean" style="color: #fff" on:click={() => visit('/users/sign_up')}
+				>Get Started</a
+			>
+		</div>
 	</div>
 
 	<!-- Nav Links (Hidden in Mobile by Default) -->
@@ -66,9 +75,13 @@
 			</li>
 		{:else}
 			<li class="mobile-user">
-				<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
-				<a class="signup clean" style="color: #fff" on:click={() => visit('/users/sign_up')}
-					>Get Started</a
+				<a href="/faq" on:click={() => (menuOpen = false)}
+					><i class="fa fa-question-circle"></i> Frequently Asked Questions</a
+				>
+			</li>
+			<li class="mobile-user">
+				<a href="/faq" on:click={() => (menuOpen = false)}
+					><i class="fa fa-question-circle"></i> About Us</a
 				>
 			</li>
 		{/if}
@@ -188,6 +201,10 @@
 			display: none;
 			border-top: 1px solid #ddd;
 			z-index: 999;
+
+			border-bottom: 14px solid #f4f4f4;
+			top: 88px;
+			box-shadow: 0px 60px 92px 4px rgb(235 235 235 / 70%);
 		}
 
 		.nav-links.open {
@@ -223,6 +240,18 @@
 
 		.signout i {
 			font-size: 14px;
+		}
+
+		.left {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.left > div {
+			display: flex;
 		}
 	}
 </style>
