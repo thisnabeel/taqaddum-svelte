@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { user, userView } from '$lib/stores/user';
+	import Comic from '../Buttons/comic.svelte';
 
 	export let logo = 'Taqaddum';
 
@@ -74,6 +75,12 @@
 				</button>
 			</li>
 		{:else}
+			<li>
+				<a href="/faq" on:click={() => (menuOpen = false)}
+					><i class="fa fa-question-circle"></i> Frequently Asked Questions</a
+				>
+			</li>
+
 			<li class="mobile-user">
 				<a href="/faq" on:click={() => (menuOpen = false)}
 					><i class="fa fa-question-circle"></i> Frequently Asked Questions</a
@@ -92,6 +99,9 @@
 		{#if !$user}
 			<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
 			<a class="signup clean" on:click={() => visit('/users/sign_up')}>Get Started</a>
+			<!-- <a class="clean" on:click={() => visit('/users/sign_up')}>
+				<Comic>Get Started</Comic>
+			</a> -->
 		{:else}
 			<!-- <button
 				class="btn"

@@ -6,7 +6,7 @@
 	<img src={mentor.avatar_cropped_url} alt={mentor.first_name + ' ' + mentor.last_name} />
 	<div class="info">
 		<h3>{mentor.first_name} {mentor.last_name}</h3>
-		<p>{mentor.profession}</p>
+		<p>{mentor.profession}<br /><span style="color:#ffff93">@ {mentor.company}</span></p>
 
 		<b> Mentoring: </b>
 		<ul class="clean-list skills">
@@ -32,6 +32,12 @@
 		padding: 15px;
 		text-align: center;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		border-radius: 10px;
+		padding: 15px;
+		text-align: center;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		background: linear-gradient(135deg, #007bff, #6610f2);
+		color: #fff;
 	}
 	.mentor-card img {
 		width: 100px;

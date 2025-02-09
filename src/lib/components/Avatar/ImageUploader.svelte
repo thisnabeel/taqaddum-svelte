@@ -90,6 +90,7 @@
 </script>
 
 {#if !image}
+	<h3>Choose Profile Picture...</h3>
 	<input
 		type="file"
 		accept=".jpg, .jpeg, .png"

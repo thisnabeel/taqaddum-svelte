@@ -17,6 +17,8 @@
 
 	$: successStatus = successMessage === 'Signed In successfully! Redirecting...';
 
+	let formFor = '';
+
 	async function register() {
 		if (successStatus) return;
 		errorMessage = '';
@@ -28,10 +30,6 @@
 		}
 
 		try {
-			if (avatar) {
-				formData.append('user[avatar]', avatar);
-			}
-
 			const response = await API.post('/users/sign_in', {
 				user: {
 					email: email,
@@ -43,6 +41,7 @@
 
 			if (response.id) {
 				successMessage = 'Signed In successfully! Redirecting...';
+				response.mode = formFor;
 				user.set(response);
 				setTimeout(() => (window.location.href = '/'), 1000);
 			} else {
@@ -56,44 +55,68 @@
 </script>
 
 <div class="container d-flex justify-content-center p-4">
-	<div class="card shadow p-4" style="width: 400px;">
-		<h2 class="text-center mb-3">Sign In</h2>
-
-		{#if errorMessage}
-			<div class="alert alert-danger">{errorMessage}</div>
-		{/if}
-		{#if successMessage}
-			<div class="alert alert-success">{successMessage}</div>
-		{/if}
-
-		<div class="mb-3">
-			<label class="form-label">Email</label>
-			<input
-				type="email"
-				disabled={successStatus}
-				bind:value={email}
-				class="form-control"
-				placeholder="Email"
-			/>
+	{#if formFor === ''}
+		<div class="card shadow p-4" style="max-width: 500px;">
+			<h2>Log In as...</h2>
+			<div class="flex">
+				<div
+					class="flex-50 flex-grow shadow p-4 btn btn-outline-primary"
+					on:click={() => {
+						formFor = 'Mentor';
+					}}
+				>
+					Mentor
+				</div>
+				<div
+					class="flex-50 flex-grow shadow p-4 btn btn-outline-primary"
+					on:click={() => {
+						formFor = 'Mentee';
+					}}
+				>
+					Mentee
+				</div>
+			</div>
 		</div>
+	{:else}
+		<div class="card shadow p-4" style="width: 400px;">
+			<h2 class="text-center mb-3">Signing In as a <u>{formFor}</u></h2>
 
-		<div class="mb-3">
-			<label class="form-label">Password</label>
-			<input
-				type="password"
-				disabled={successStatus}
-				bind:value={password}
-				class="form-control"
-				placeholder="Password"
-			/>
+			{#if errorMessage}
+				<div class="alert alert-danger">{errorMessage}</div>
+			{/if}
+			{#if successMessage}
+				<div class="alert alert-success">{successMessage}</div>
+			{/if}
+
+			<div class="mb-3">
+				<label class="form-label">Email</label>
+				<input
+					type="email"
+					disabled={successStatus}
+					bind:value={email}
+					class="form-control"
+					placeholder="Email"
+				/>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Password</label>
+				<input
+					type="password"
+					disabled={successStatus}
+					bind:value={password}
+					class="form-control"
+					placeholder="Password"
+				/>
+			</div>
+
+			<button on:click={register} class="btn btn-primary w-100">Sign In</button>
+
+			<p class="text-center mt-3">
+				Don't have an account? <a href="/users/sign_up">Sign Up</a>
+			</p>
 		</div>
-
-		<button on:click={register} class="btn btn-primary w-100">Sign In</button>
-
-		<p class="text-center mt-3">
-			Don't have an account? <a href="/sign_up">Sign Up</a>
-		</p>
-	</div>
+	{/if}
 </div>
 
 <style>

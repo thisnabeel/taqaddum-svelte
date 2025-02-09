@@ -12,6 +12,7 @@
 	import { modals } from 'svelte-modals';
 	import SkillsModal from '$lib/components/Skills/SkillsModal.svelte';
 	import Swal from 'sweetalert2';
+	import Comic from '$lib/components/Buttons/comic.svelte';
 
 	let first_name = '';
 	let last_name = '';
@@ -19,6 +20,7 @@
 	let password = '';
 	let password_confirmation = '';
 	let profession = '';
+	let company = '';
 	let errorMessage = '';
 	let successMessage = '';
 
@@ -81,6 +83,7 @@
 					password: password,
 					password_confirmation: password_confirmation,
 					profession: profession,
+					company: company,
 					mentor_skills: mentorSkills.filter((s) => s),
 					mentee_skills: menteeSkills.filter((s) => s)
 				}
@@ -90,6 +93,8 @@
 
 			if (response.id) {
 				successMessage = 'Account created successfully! Redirecting...';
+				response.mode = formFor;
+
 				user.set(response);
 
 				Swal.close();
@@ -142,8 +147,9 @@
 </script>
 
 <div class="container d-flex justify-content-center p-4">
-	{#if formFor === ''}
-		<div class="card shadow p-4" style="max-width: 500px;">
+	<div class="card shadow p-4" style="max-width: 500px;">
+		{#if formFor === ''}
+			<p>Let's get you signed up to Taqaddum</p>
 			<h2>What best describes you...</h2>
 			<div class="flex">
 				<div
@@ -163,9 +169,7 @@
 					I'm a Mentee
 				</div>
 			</div>
-		</div>
-	{:else}
-		<div class="card shadow p-4" style="width: 400px;">
+		{:else}
 			{#if formFor === 'Mentor'}
 				<h3 class="text-center mb-3">Apply for a {formFor} Account</h3>
 				<p>We will review your application and email you back.</p>
@@ -208,6 +212,11 @@
 				/>
 			</div>
 
+			<div class="mb-3">
+				<label class="form-label">Company</label>
+				<input type="text" bind:value={company} class="form-control" placeholder="Your Company" />
+			</div>
+
 			{#if formFor === 'Mentor'}
 				<div class="mb-3">
 					<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
@@ -220,10 +229,14 @@
 								});
 							}}
 						>
-							<div class="flex-grow flex-90">
-								<div class="form-control" class:gray={!skill || !skill.title}>
-									{skill ? skill.title : 'Select Expertise...'}
-								</div>
+							<div class="flex-grow flex-90" style="margin-bottom: 10px;">
+								{#if skill && skill.title}
+									<Comic>{skill.title}</Comic>
+								{:else}
+									<div class="form-control" class:gray={!skill || !skill.title}>
+										{skill ? skill.title : 'Select Expertise...'}
+									</div>
+								{/if}
 							</div>
 							<div class="flex-grow flex-10 btn">
 								<i class="fa fa-expand"></i>
@@ -258,10 +271,10 @@
 			<button on:click={register} class="btn btn-primary w-100">Sign Up</button>
 
 			<p class="text-center mt-3">
-				Already have an account? <a href="/sign_in">Log in</a>
+				Already have an account? <a href="/users/sign_in">Log in</a>
 			</p>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <style>

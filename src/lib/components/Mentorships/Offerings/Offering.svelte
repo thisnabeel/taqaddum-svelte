@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	import API from '$lib/api/api';
 	import { DateTime } from 'luxon';
 
@@ -17,6 +18,37 @@
 			editing = true;
 		}
 	}
+
+	async function startChatRoom(slotDetails) {
+		const code = await generateChatRoomId(slotDetails);
+		goto('/video/' + code + '/2');
+	}
+	async function generateChatRoomId(session) {
+		// Extract relevant fields
+		const keyData = JSON.stringify({
+			title: session.title.trim().toLowerCase(),
+			date: session.booking_date,
+			startTime: session.start_time,
+			mentorId: session.offering.mentorship.user.id,
+			skillId: session.offering.mentorship.skill.id
+		});
+
+		// Encode data as Uint8Array
+		const encoder = new TextEncoder();
+		const data = encoder.encode(keyData);
+
+		// Hash using SHA-256
+		const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+		const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+		// Convert to hex and return first 10 chars for uniqueness
+		return hashArray
+			.map((b) => b.toString(16).padStart(2, '0'))
+			.join('')
+			.slice(0, 10);
+	}
+
+	// Example usage
 
 	async function deleteMeetingOffering(id) {
 		if (offering.uuid) {
@@ -139,7 +171,12 @@
 					</b>
 				</div>
 
-				<div class="btn btn-outline-primary flex-30 flex-grow">Book Now</div>
+				<div
+					class="btn btn-outline-primary flex-30 flex-grow"
+					on:click={() => startChatRoom(slotDetails)}
+				>
+					Book Now
+				</div>
 			</small>
 		{:else}
 			<small style="display:block;">

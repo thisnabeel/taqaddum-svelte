@@ -12,6 +12,7 @@
 		<div class="mentor-info">
 			<h2>{mentor.first_name} {mentor.last_name}</h2>
 			<h4 class="mentor-profession">{mentor.profession}</h4>
+			<h4 class="mentor-profession" style="color:#ffff93">@ {mentor.company}</h4>
 			<!-- <p class="mentor-bio">
 				{mentor.bio || 'This mentor has a wealth of knowledge to share!'}
 			</p> -->
