@@ -26,12 +26,14 @@
 			</button>
 		</div>
 
-		<div class="mobile-user">
-			<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
-			<a class="signup clean" style="color: #fff" on:click={() => visit('/users/sign_up')}
-				>Get Started</a
-			>
-		</div>
+		{#if !$user}
+			<div class="mobile-user">
+				<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
+				<a class="signup clean" style="color: #fff" on:click={() => visit('/users/sign_up')}
+					>Get Started</a
+				>
+			</div>
+		{/if}
 	</div>
 
 	<!-- Nav Links (Hidden in Mobile by Default) -->
@@ -75,7 +77,7 @@
 				</button>
 			</li>
 		{:else}
-			<li>
+			<li class="not-mobile-user">
 				<a href="/faq" on:click={() => (menuOpen = false)}
 					><i class="fa fa-question-circle"></i> Frequently Asked Questions</a
 				>
@@ -197,6 +199,10 @@
 			border: none;
 			font-size: 22px;
 			cursor: pointer;
+		}
+
+		.not-mobile-user {
+			display: none;
 		}
 
 		.nav-links {
