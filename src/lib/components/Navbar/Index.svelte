@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { user, userView } from '$lib/stores/user';
 	import Comic from '../Buttons/comic.svelte';
-
+	import IfAdmin from '../Admin/IfAdmin.svelte';
 	export let logo = 'Taqaddum';
 
 	let menuOpen = false;
@@ -71,6 +71,13 @@
 			<!-- Show user's name & sign out inside mobile dropdown -->
 
 			<li class="mobile-user">
+				<IfAdmin>
+					<button class="login" on:click={() => visit('/admin/skills')}
+						>Admin <i class="fa fa-cog"></i></button
+					>
+				</IfAdmin>
+			</li>
+			<li class="mobile-user">
 				<span on:click={() => visit('/users/edit')}>{$user.first_name} {$user.last_name}</span>
 				<button class="signout" on:click={() => user.set(null)}>
 					<i class="fa fa-sign-out"></i> Sign Out
@@ -115,6 +122,11 @@
 				></i> Mentor</button
 			> -->
 
+			<IfAdmin>
+				<button class="login" on:click={() => visit('/admin/skills')}
+					>Admin <i class="fa fa-cog"></i></button
+				>
+			</IfAdmin>
 			<button class="btn" on:click={() => visit('/users/edit')}>
 				<img src={$user.avatar_cropped_url} class="mentor-avatar" />
 				{$user.first_name}
