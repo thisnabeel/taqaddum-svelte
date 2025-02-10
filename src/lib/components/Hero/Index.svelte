@@ -8,7 +8,7 @@
 
 <section class="hero">
 	<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
-		<img style="width:100%" src="/cta.png" alt="" />
+		<img style="width:100%" src="/cta2.png" alt="" />
 	</div>
 
 	<h1 class="heading">Islamic Values, <span>Professional Success.</span></h1>
