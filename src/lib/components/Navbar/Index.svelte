@@ -52,7 +52,7 @@
 				</li>
 				<li>
 					<a href="/users/slots" on:click={() => (menuOpen = false)}
-						><i class="fa fa-lightbulb-o"></i> Generated Slots</a
+						><i class="fa fa-lightbulb-o"></i> Slots</a
 					>
 				</li>
 			{:else if $userView === 'mentee'}
