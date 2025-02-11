@@ -75,7 +75,8 @@
 
 			if (response.id) {
 				successMessage = 'Profile updated successfully!';
-				user.set(response);
+				Swal.fire('Success', 'Profile updated successfully!', 'success');
+				user.set({ ...$user, ...response });
 			} else {
 				errorMessage = 'Something went wrong. Please try again.';
 			}
@@ -141,7 +142,7 @@
 		{#if $user && $user.mode === 'Mentor'}
 			<div class="mb-3">
 				<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
-				{#each mentorSkills as skill, index}
+				{#each Array(3) as _, index}
 					<div
 						class="flex"
 						on:click={() => {
@@ -151,11 +152,14 @@
 						}}
 					>
 						<div class="flex-grow flex-90" style="margin-bottom: 10px;">
-							{#if skill && skill.title}
-								<Comic>{skill.title}</Comic>
+							{#if mentorSkills[index] && mentorSkills[index].title}
+								<Comic>{mentorSkills[index].title}</Comic>
 							{:else}
-								<div class="form-control" class:gray={!skill || !skill.title}>
-									{skill ? skill.title : 'Select Expertise...'}
+								<div
+									class="form-control"
+									class:gray={!mentorSkills[index] || !mentorSkills[index].title}
+								>
+									Select Expertise...
 								</div>
 							{/if}
 						</div>
