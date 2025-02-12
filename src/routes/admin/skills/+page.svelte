@@ -66,7 +66,8 @@
 </script>
 
 <AdminWall>
-	<h1 class="title">Skills Management</h1>
+	<br />
+	<h1 class="text-center">Skills Management</h1>
 
 	<div class="input-container">
 		<input type="text" bind:value={newSkill} placeholder="Add a new skill..." />
