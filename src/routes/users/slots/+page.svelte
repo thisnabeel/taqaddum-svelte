@@ -35,7 +35,7 @@
 		</div>
 	</div>
 {:else}
-	<Slots potentialMeetups={list.potential_meetups}></Slots>
+	<Slots meetups={list.potential_meetups} slotsAdmin={true}></Slots>
 {/if}
 
 <style>

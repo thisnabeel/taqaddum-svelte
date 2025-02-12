@@ -1,7 +1,10 @@
 <script>
 	import { goto } from '$app/navigation';
 	import API from '$lib/api/api';
+	import { user } from '$lib/stores/user';
 	import { DateTime } from 'luxon';
+	import { onMount } from 'svelte';
+	import Swal from 'sweetalert2';
 
 	export let offering;
 	export let mentorships;
@@ -9,17 +12,15 @@
 	export let removeOffering;
 	export let readOnly = true;
 	export let slotDetails;
+	export let slotsAdmin;
 
-	let editing = false;
-
-	$: checkInit(offering);
-	function checkInit(offering) {
-		if (offering.id < 0) {
-			editing = true;
-		}
-	}
+	export let editing = false;
 
 	async function startChatRoom(slotDetails) {
+		if (!$user) {
+			Swal.fire('You must Sign In to book a meeting');
+			return;
+		}
 		const code = await generateChatRoomId(slotDetails);
 		goto('/video/' + code + '/2');
 	}
@@ -52,13 +53,15 @@
 
 	async function deleteMeetingOffering(id) {
 		if (offering.uuid) {
-			removeOffering(offering.uuid);
+			removeOffering(offering.uuid, 'code');
 			return;
 		}
 		if (!confirm('Are you sure you want to delete this meeting offering?')) return;
 		try {
+			console.log({ offering });
+
 			await API.delete(`/meeting_offerings/${id}`);
-			fetchMeetingOfferings(); // Ensure this function is available in the parent component
+			removeOffering(id, 'id');
 		} catch (error) {
 			console.error('Error deleting meeting offering:', error);
 		}
@@ -86,6 +89,7 @@
 			}
 
 			if (response) {
+				offering = response;
 				editing = false;
 			}
 		} catch (error) {
@@ -102,17 +106,61 @@
 
 		// Restore cursor position
 		requestAnimationFrame(() => {
+			if (!event.target || !event.target.firstChild) return;
 			range.setStart(event.target.firstChild, Math.min(offset, event.target.firstChild.length));
 			range.setEnd(event.target.firstChild, Math.min(offset, event.target.firstChild.length));
 			selection.removeAllRanges();
 			selection.addRange(range);
 		});
 	}
+
+	async function saveSlot() {
+		const res = await API.post('/slots/configure', {
+			user_id: $user.id,
+			slot_details: slotDetails,
+			status: slotDetails.status
+		});
+		Swal.close();
+	}
+
+	function denySlot() {
+		slotDetails.status = 'denied';
+		Swal.fire({
+			title: `Denying slot...`,
+			text: 'Please stay on page...',
+			showCloseButton: false,
+			showConfirmButton: false
+		});
+		saveSlot();
+	}
+
+	function lockSlot() {
+		slotDetails.status = 'locked';
+		Swal.fire({
+			title: `Locking slot...`,
+			text: 'Please stay on page...',
+			showCloseButton: false,
+			showConfirmButton: false
+		});
+		saveSlot();
+	}
+
+	function clearSlot() {
+		slotDetails.status = 'potential';
+		Swal.fire({
+			title: `Opening slot...`,
+			text: 'Please stay on page...',
+			showCloseButton: false,
+			showConfirmButton: false
+		});
+		saveSlot();
+	}
 </script>
 
-<li class:editing>
+<li class:editing class="main {slotDetails && slotDetails.status ? slotDetails.status : ''}">
 	<div class="content">
 		{#if editing}
+			<div class="unsaved-banner">Unsaved</div>
 			<select
 				name=""
 				id=""
@@ -175,9 +223,34 @@
 					class="btn btn-outline-primary flex-30 flex-grow"
 					on:click={() => startChatRoom(slotDetails)}
 				>
-					Book Now
+					{#if slotsAdmin}
+						Enter Meeting
+					{:else}
+						{#if !$user}
+							<i class="fa fa-lock"></i>
+						{/if}{'  '}Book Now
+					{/if}
 				</div>
 			</small>
+			{#if slotsAdmin}
+				<div class="status">
+					<div
+						class="fa fa-lock"
+						class:active={slotDetails.status === 'locked'}
+						on:click={() => lockSlot()}
+					></div>
+					<div
+						class="fa fa-circle-o"
+						class:active={slotDetails.status === 'potential'}
+						on:click={() => clearSlot()}
+					></div>
+					<div
+						class="fa fa-times-circle"
+						class:active={slotDetails.status === 'denied'}
+						on:click={() => denySlot()}
+					></div>
+				</div>
+			{/if}
 		{:else}
 			<small style="display:block;">
 				Duration Per Session:
@@ -195,9 +268,15 @@
 				<button on:click={saveChanges}>
 					<i class="fa fa-save"></i>
 				</button>
-				<button on:click={() => (editing = false)} class="cancel">
-					<i class="fa fa-times"></i>
-				</button>
+				{#if offering.id === -1}
+					<button on:click={() => deleteMeetingOffering(offering.uuid)} class="delete">
+						<i class="fa fa-trash"></i>
+					</button>
+				{:else}
+					<button on:click={() => (editing = false)} class="cancel">
+						<i class="fa fa-times"></i>
+					</button>
+				{/if}
 			{:else}
 				<button on:click={() => (editing = true)}>
 					<i class="fa fa-edit"></i>
@@ -211,6 +290,45 @@
 </li>
 
 <style>
+	.status {
+		position: absolute;
+		top: 0;
+		left: -50px;
+		display: inline-grid;
+		font-size: 34px;
+		top: 12px;
+		color: #ccc;
+		cursor: pointer;
+	}
+
+	.status > *:hover {
+		color: rgb(129, 0, 129);
+	}
+
+	.status > * {
+		margin-bottom: 10px;
+	}
+	.denied {
+		text-decoration: line-through;
+		color: #ccc;
+		background-color: #f3f3f3;
+	}
+
+	.locked {
+		background-color: #beffdf;
+	}
+
+	.status .fa.fa-times-circle.active {
+		color: red;
+	}
+
+	.status .fa.fa-lock.active {
+		color: green;
+	}
+
+	.status .fa.fa-circle-o.active {
+		color: black;
+	}
 	.durations span {
 		margin-right: 8px;
 		cursor: pointer;
@@ -289,5 +407,26 @@
 
 	.editing {
 		border: 1px dashed;
+	}
+
+	li {
+		position: relative;
+	}
+
+	.unsaved-banner {
+		position: absolute;
+		top: -9px;
+		right: 4px;
+		background: #ff1d1d;
+		color: #fff;
+		padding: 10px;
+		border-radius: 10px;
+	}
+
+	@media (max-width: 768px) {
+		.status {
+			display: block;
+			position: initial;
+		}
 	}
 </style>

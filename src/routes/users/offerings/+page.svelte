@@ -6,6 +6,11 @@
 	import { user } from '$lib/stores/user';
 	import Offering from '$lib/components/Mentorships/Offerings/Offering.svelte';
 	import uuid from '$lib/components/functions/uuid';
+	import Comic from '$lib/components/Buttons/comic.svelte';
+
+	onMount(() => {
+		fetchSlots();
+	});
 
 	let loading = true;
 	let meetingOfferings = [];
@@ -24,11 +29,17 @@
 	let current_user = { id: null };
 	let mentorships = [];
 
+	let slots = [];
+
+	async function fetchSlots() {
+		slots = await API.get('/slots?user_id=' + $user.id);
+	}
 	user.subscribe((p) => {
 		if (!p) return;
 		current_user = p;
 		fetchMeetingOfferings();
 		fetchMentorships();
+		fetchSlots();
 	});
 
 	async function fetchMentorships() {
@@ -78,8 +89,14 @@
 		editingId = offering.id;
 	}
 
-	function removeOffering(code) {
-		meetingOfferings = meetingOfferings.filter((m) => m.uuid !== code);
+	function removeOffering(id, type) {
+		console.log({ meetingOfferings });
+		console.log(id, type);
+		if (type === 'code') {
+			meetingOfferings = meetingOfferings.filter((m) => m.uuid !== id);
+		} else if (type === 'id') {
+			meetingOfferings = meetingOfferings.filter((m) => m.id !== id);
+		}
 	}
 
 	function resetForm() {
@@ -103,35 +120,51 @@
 		<div><img src="/spinner.svg" alt="" /> Loading...</div>
 	{:else}
 		<!-- List of Meeting Offerings -->
-		<div
-			class="btn btn-block btn-outline-primary"
-			on:click={() => {
-				meetingOfferings = [
-					{
-						id: -1,
-						mentorship_id: null,
-						title: 'Edit Title...',
-						description: 'Edit Description..',
-						duration: 30,
-						uuid: uuid(meetingOfferings.map((m) => m.uuid))
-					},
-					...meetingOfferings
-				];
-				console.log({ meetingOfferings });
-			}}
-		>
-			<i class="fa fa-plus"></i> Add New Offering
-		</div>
+
+		<p>Click a skill to add a mentor offering...</p>
+		<ul class="clean-list mentorships">
+			{#each mentorships as m}
+				<li
+					on:click={() => {
+						meetingOfferings = [
+							{
+								id: -1,
+								mentorship_id: m.id,
+								title: 'Edit Title...',
+								description: 'Edit Description..',
+								duration: 30,
+								uuid: uuid(meetingOfferings.map((m) => m.uuid))
+							},
+							...meetingOfferings
+						];
+						console.log({ meetingOfferings });
+					}}
+				>
+					<Comic>+ {m.skill.title}</Comic>
+				</li>
+			{/each}
+		</ul>
 		<br /><br />
 		<ul class="offerings">
 			{#each meetingOfferings as offering}
-				<Offering {offering} {mentorships} {removeOffering} readOnly={false}></Offering>
+				<Offering
+					editing={offering.id < 0}
+					{slots}
+					{offering}
+					{mentorships}
+					{removeOffering}
+					readOnly={false}
+				></Offering>
 			{/each}
 		</ul>
 	{/if}
 </div>
 
 <style>
+	.mentorships > li {
+		display: inline-block;
+		margin-right: 10px;
+	}
 	.container {
 		max-width: 600px;
 		margin: auto;

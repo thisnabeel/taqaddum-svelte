@@ -93,9 +93,8 @@
 
 			if (response.id) {
 				successMessage = 'Account created successfully! Redirecting...';
-				response.mode = formFor;
 
-				user.set(response);
+				user.set({ ...response, mode: formFor });
 
 				Swal.close();
 				Swal.fire({
@@ -119,8 +118,16 @@
 					}
 				);
 				console.log(avatar_res);
-
+				user.set({ ...avatar_res, mode: formFor });
 				Swal.close();
+				// Account created successfully! Redirecting...
+				Swal.fire({
+					title: 'Account created successfully!...',
+					text: 'Redirecting...',
+					showCloseButton: false,
+					showConfirmButton: false,
+					allowOutsideClick: false
+				});
 				setTimeout(() => (window.location.href = '/'), 2000);
 			} else {
 				const data = await response.json();
