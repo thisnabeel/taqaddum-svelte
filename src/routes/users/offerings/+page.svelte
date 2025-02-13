@@ -7,6 +7,7 @@
 	import Offering from '$lib/components/Mentorships/Offerings/Offering.svelte';
 	import uuid from '$lib/components/functions/uuid';
 	import Comic from '$lib/components/Buttons/comic.svelte';
+	import MeetingSlotsGuide from '$lib/components/Guide/MeetingSlots.svelte';
 
 	onMount(() => {
 		fetchSlots();
@@ -114,6 +115,7 @@
 </script>
 
 <div class="container">
+	<MeetingSlotsGuide></MeetingSlotsGuide>
 	<h2>Meeting Offerings:</h2>
 
 	{#if loading}

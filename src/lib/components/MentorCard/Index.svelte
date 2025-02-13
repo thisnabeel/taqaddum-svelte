@@ -1,18 +1,17 @@
 <script>
 	export let mentor;
+	export let mentorship;
 </script>
 
 <a class="mentor-card clean" href="/mentors/{mentor.id}">
 	<img src={mentor.avatar_cropped_url} alt={mentor.first_name + ' ' + mentor.last_name} />
 	<div class="info">
 		<h3>{mentor.first_name} {mentor.last_name}</h3>
-		<p>{mentor.profession}<br /><span style="color:#ffff93">@ {mentor.company}</span></p>
+		<p>{mentorship.profession}<br /><span style="color:#ffff93">@ {mentorship.company}</span></p>
 
 		<b> Mentoring: </b>
 		<ul class="clean-list skills">
-			{#each mentor.mentorships as mentorship}
-				<li>{mentorship.skill.title}</li>
-			{/each}
+			<li>{mentorship.skill.title}</li>
 		</ul>
 	</div>
 </a>

@@ -37,7 +37,8 @@
 		</div>
 	</div>
 {:else}
-	<Slots meetups={list.potential_meetups} slotsAdmin={false}></Slots>
+	<Slots meetups={list.potential_meetups.filter((s) => s.status !== 'denied')} slotsAdmin={false}
+	></Slots>
 {/if}
 
 <style>

@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { DateTime as Luxon } from 'luxon';
 	import { DateTime } from 'luxon';
+	import MeetingSlotsGuide from '$lib/components/Guide/MeetingSlots.svelte';
 
 	let current_user = { id: null };
 	let loading = true;
@@ -193,6 +194,7 @@
 </script>
 
 <div class="availability-container">
+	<MeetingSlotsGuide></MeetingSlotsGuide>
 	<h3>My Weekly Availability</h3>
 
 	{#each Object.keys(availability) as day}

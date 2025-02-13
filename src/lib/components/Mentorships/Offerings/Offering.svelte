@@ -146,7 +146,7 @@
 	}
 
 	function clearSlot() {
-		slotDetails.status = 'potential';
+		slotDetails.status = 'open';
 		Swal.fire({
 			title: `Opening slot...`,
 			text: 'Please stay on page...',
@@ -223,7 +223,7 @@
 					class="btn btn-outline-primary flex-30 flex-grow"
 					on:click={() => startChatRoom(slotDetails)}
 				>
-					{#if slotsAdmin}
+					{#if slotsAdmin || ($user && $user.id === slotDetails.user_id)}
 						Enter Meeting
 					{:else}
 						{#if !$user}
@@ -235,13 +235,8 @@
 			{#if slotsAdmin}
 				<div class="status">
 					<div
-						class="fa fa-lock"
-						class:active={slotDetails.status === 'locked'}
-						on:click={() => lockSlot()}
-					></div>
-					<div
 						class="fa fa-circle-o"
-						class:active={slotDetails.status === 'potential'}
+						class:active={slotDetails.status === 'open'}
 						on:click={() => clearSlot()}
 					></div>
 					<div

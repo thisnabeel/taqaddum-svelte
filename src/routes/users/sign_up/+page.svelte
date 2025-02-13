@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import AvatarPicker from '$lib/components/Avatar/AvatarPicker.svelte'; // Importing the avatar picker component
+	import AvatarPicker from '$lib/components/Avatar/AvatarPicker.svelte';
 	import API from '$lib/api/api';
 	import { user } from '$lib/stores/user';
 	import Search from '$lib/components/Skills/Search.svelte';
@@ -25,29 +25,38 @@
 	let successMessage = '';
 
 	onMount(() => {});
-	let avatar = null;
-	let avatarPreview = '/default-avatar.png'; // Placeholder image
 
-	let formPart = 1;
 	let formFor = '';
+	let mentorSkills = [];
+	let menteeSkills = [];
 
-	let mentorSkills = [null, null, null];
-	let menteeSkills = [null, null, null];
+	function addSkill() {
+		modals.open(SkillsModal, {
+			selectSkill: (payload) => selectSkill(payload)
+		});
+	}
 
-	$: console.log(mentorSkills);
-	$: console.log(menteeSkills);
+	function selectSkill(payload) {
+		if (formFor === 'Mentor') {
+			mentorSkills = [...mentorSkills, payload];
+		} else {
+			menteeSkills = [...menteeSkills, payload];
+		}
+		console.log({ mentorSkills });
+		modals.close();
+	}
 
 	async function register() {
 		errorMessage = '';
 		successMessage = '';
 
-		if (!first_name || !last_name || !email || !password || !password_confirmation || !profession) {
-			raiseError('All fields are required.');
+		if (!$avatar_cropped_blob_url) {
+			raiseError('Avatar Image is Required.');
 			return;
 		}
 
-		if (!$avatar_cropped_blob_url) {
-			raiseError('Avatar Image is Required.');
+		if (!first_name || !last_name || !email || !password || !password_confirmation) {
+			raiseError('All fields are required.');
 			return;
 		}
 
@@ -56,13 +65,27 @@
 			return;
 		}
 
-		if (formFor === 'Mentor' && mentorSkills.filter((s) => s).length < 1) {
-			raiseError('No Skills selected.');
-			return;
+		if (formFor === 'Mentor') {
+			if (mentorSkills.length < 1) {
+				raiseError('At least one skill is required.');
+				return;
+			}
+
+			for (let skill of mentorSkills) {
+				if (
+					!skill.company ||
+					!skill.company.length > 1 ||
+					!skill.profession ||
+					!skill.profession.length > 1
+				) {
+					raiseError('Each selected skill must have an associated company and profession.');
+					return;
+				}
+			}
 		}
 
-		if (formFor === 'Mentee' && mentorSkills.filter((s) => s).length < 1) {
-			raiseError('No Skills selected.');
+		if (formFor === 'Mentee' && menteeSkills.length < 1) {
+			raiseError('At least one skill is required.');
 			return;
 		}
 
@@ -77,19 +100,17 @@
 		try {
 			const response = await API.post('/users', {
 				user: {
-					first_name: first_name,
-					last_name: last_name,
-					email: email,
-					password: password,
-					password_confirmation: password_confirmation,
-					profession: profession,
-					company: company,
+					first_name,
+					last_name,
+					email,
+					password,
+					password_confirmation,
+					profession,
+					company,
 					mentor_skills: mentorSkills.filter((s) => s),
 					mentee_skills: menteeSkills.filter((s) => s)
 				}
 			});
-
-			console.log(response);
 
 			if (response.id) {
 				successMessage = 'Account created successfully! Redirecting...';
@@ -142,15 +163,6 @@
 		errorMessage = msg;
 		alert(msg);
 	}
-
-	function selectSkill(payload, index) {
-		if (formFor === 'Mentor') {
-			mentorSkills[index] = payload; // ✅ Update mentor skills at correct index
-		} else {
-			menteeSkills[index] = payload; // ✅ Update mentee skills at correct index
-		}
-		modals.close();
-	}
 </script>
 
 <div class="container d-flex justify-content-center p-4">
@@ -159,30 +171,15 @@
 			<p>Let's get you signed up to Taqaddum</p>
 			<h2>What best describes you...</h2>
 			<div class="flex">
-				<div
-					class="flex-50 flex-grow shadow p-4 btn btn-outline-primary"
-					on:click={() => {
-						formFor = 'Mentor';
-					}}
-				>
+				<button class="btn btn-outline-primary w-100 mb-2" on:click={() => (formFor = 'Mentor')}>
 					I'm a Mentor
-				</div>
-				<div
-					class="flex-50 flex-grow shadow p-4 btn btn-outline-primary"
-					on:click={() => {
-						formFor = 'Mentee';
-					}}
-				>
+				</button>
+				<button class="btn btn-outline-primary w-100" on:click={() => (formFor = 'Mentee')}>
 					I'm a Mentee
-				</div>
+				</button>
 			</div>
 		{:else}
-			{#if formFor === 'Mentor'}
-				<h3 class="text-center mb-3">Apply for a {formFor} Account</h3>
-				<p>We will review your application and email you back.</p>
-			{:else}
-				<h3 class="text-center mb-3">Create a {formFor} Account</h3>
-			{/if}
+			<h3 class="text-center mb-3">Create a {formFor} Account</h3>
 
 			{#if errorMessage}
 				<div class="alert alert-danger">{errorMessage}</div>
@@ -191,89 +188,69 @@
 				<div class="alert alert-success">{successMessage}</div>
 			{/if}
 
-			<!-- Avatar Upload Component -->
 			<AvatarPicker signingUp={true} />
 
-			<div class="mb-3">
-				<label class="form-label">First Name</label>
-				<input type="text" bind:value={first_name} class="form-control" placeholder="First Name" />
-			</div>
+			<input
+				type="text"
+				bind:value={first_name}
+				class="form-control mb-3"
+				placeholder="First Name"
+			/>
+			<input type="text" bind:value={last_name} class="form-control mb-3" placeholder="Last Name" />
+			<input type="email" bind:value={email} class="form-control mb-3" placeholder="Email" />
 
 			<div class="mb-3">
-				<label class="form-label">Last Name</label>
-				<input type="text" bind:value={last_name} class="form-control" placeholder="Last Name" />
-			</div>
+				<label class="form-label"
+					>{formFor === 'Mentor' ? 'Willing to Mentor In:' : 'Seeking Mentors In:'}</label
+				>
 
-			<div class="mb-3">
-				<label class="form-label">Email</label>
-				<input type="email" bind:value={email} class="form-control" placeholder="Email" />
-			</div>
-
-			<div class="mb-3">
-				<label class="form-label">Profession</label>
-				<input
-					type="text"
-					bind:value={profession}
-					class="form-control"
-					placeholder="Your Profession"
-				/>
-			</div>
-
-			<div class="mb-3">
-				<label class="form-label">Company</label>
-				<input type="text" bind:value={company} class="form-control" placeholder="Your Company" />
-			</div>
-
-			{#if formFor === 'Mentor'}
-				<div class="mb-3">
-					<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
-					{#each mentorSkills as skill, index}
-						<div
-							class="flex"
-							on:click={() => {
-								modals.open(SkillsModal, {
-									selectSkill: (payload) => selectSkill(payload, index)
-								});
-							}}
-						>
-							<div class="flex-grow flex-90" style="margin-bottom: 10px;">
-								{#if skill && skill.title}
-									<Comic>{skill.title}</Comic>
-								{:else}
-									<div class="form-control" class:gray={!skill || !skill.title}>
-										{skill ? skill.title : 'Select Expertise...'}
-									</div>
-								{/if}
-							</div>
-							<div class="flex-grow flex-10 btn">
-								<i class="fa fa-expand"></i>
-							</div>
+				{#each formFor === 'Mentor' ? mentorSkills : menteeSkills as skill, index}
+					<div class="skill-box">
+						<div class="skill-header">
+							<Comic>{skill.title}</Comic>
+							<label
+								for=""
+								style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+								>Title/Role/Profession</label
+							>
+							<input
+								type="text"
+								bind:value={skill.profession}
+								class="form-control mt-2"
+								placeholder="Example: Software Engineer, Researcher"
+							/>
+							<label
+								for=""
+								style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+								>Applied at: (Company Name)</label
+							>
+							<input
+								type="text"
+								bind:value={skill.company}
+								class="form-control mt-2"
+								placeholder="Example: Paypal, Stanford University"
+							/>
 						</div>
-					{/each}
-				</div>
-			{:else}
-				<div class="mb-3">
-					<label class="form-label">Seeking Mentors In: (Select up to 3)</label>
-					{#each menteeSkills as skill}
-						<Search placeholder="Search Interest..." bind:selectedValue={skill}></Search>
-					{/each}
-				</div>
-			{/if}
+					</div>
+				{/each}
 
-			<div class="mb-3">
-				<label class="form-label">Password</label>
-				<input type="password" bind:value={password} class="form-control" placeholder="Password" />
+				<button class="btn btn-outline-secondary w-100 mt-2" on:click={addSkill}
+					>Add another skill +</button
+				>
 			</div>
 
-			<div class="mb-3">
-				<label class="form-label">Confirm Password</label>
-				<input
-					type="password"
-					bind:value={password_confirmation}
-					class="form-control"
-					placeholder="Confirm Password"
-				/>
-			</div>
+			<input
+				type="password"
+				bind:value={password}
+				class="form-control mb-3"
+				placeholder="Password"
+			/>
+			<input
+				type="password"
+				bind:value={password_confirmation}
+				class="form-control mb-3"
+				placeholder="Confirm Password"
+			/>
 
 			<button on:click={register} class="btn btn-primary w-100">Sign Up</button>
 
@@ -295,8 +272,25 @@
 		border-color: #0d6efd;
 		box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
 	}
-
 	.gray {
 		background-color: #e4e4e4;
+	}
+	.skill-box {
+		background: #f1f1f1;
+		padding: 10px;
+		border-radius: 8px;
+		margin-bottom: 10px;
+	}
+	.skill-header {
+		cursor: pointer;
+		background: white;
+		padding: 10px;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+		text-align: center;
+	}
+
+	.skill-header :global(button) {
+		width: 100%;
 	}
 </style>

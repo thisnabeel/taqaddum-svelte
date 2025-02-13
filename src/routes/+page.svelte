@@ -19,8 +19,8 @@
 <section class="mentors">
 	<h1 class="text-center">Vetted Mentors:</h1>
 	<div class="list">
-		{#each mentors as mentor}
-			<MentorCard {mentor} />
+		{#each mentors as mentorship}
+			<MentorCard mentor={mentorship.user} {mentorship} />
 		{/each}
 	</div>
 </section>

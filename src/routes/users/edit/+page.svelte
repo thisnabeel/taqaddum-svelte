@@ -18,9 +18,12 @@
 	let avatar = null;
 	let company = '';
 	let avatarPreview = '/default-avatar.png'; // Placeholder image
+	let expandedMentorhips = [];
 
-	let mentorSkills = [null, null, null];
-	let menteeSkills = [null, null, null];
+	let mentorSkills = [];
+	let menteeSkills = [];
+	let mentorSkillsToAdd = [];
+	let menteeSkillsToAdd = [];
 
 	onMount(async () => {});
 
@@ -32,19 +35,25 @@
 			profession = response.profession;
 			company = response.company;
 			avatarPreview = response.avatar_cropped_url || avatarPreview;
-			mentorSkills = response.mentor_skills || [null, null, null];
-			menteeSkills = response.mentee_skills || [null, null, null];
+			mentorSkills = response.mentor_skills || [];
+			menteeSkills = response.mentee_skills || [];
 			console.log({ response });
 			fetchMentorships();
 		}
 	});
+
+	function toggleMentorship(mentorship) {
+		expandedMentorhips = expandedMentorhips.includes(mentorship)
+			? expandedMentorhips.filter((m) => m !== mentorship) // Remove if already expanded
+			: [...expandedMentorhips, mentorship]; // Add if not expanded
+	}
 
 	async function fetchMentorships() {
 		try {
 			const endpoint = $user.id ? `/mentorships?user_id=${$user.id}` : '/mentorships';
 			const response = await API.get(endpoint);
 			console.log({ response });
-			mentorSkills = response.map((r) => r.skill);
+			mentorSkills = response;
 			console.log({ mentorSkills });
 			// mentorSkills = response || [];
 		} catch (error) {
@@ -55,7 +64,7 @@
 		errorMessage = '';
 		successMessage = '';
 
-		if (!first_name || !last_name || !email || !profession) {
+		if (!first_name || !last_name || !email) {
 			errorMessage = 'All fields are required.';
 			return;
 		}
@@ -68,14 +77,18 @@
 					last_name,
 					profession,
 					company,
-					mentor_skills: mentorSkills.filter((s) => s),
-					mentee_skills: menteeSkills.filter((s) => s)
+					mentor_skills_to_add: mentorSkillsToAdd,
+					mentee_skills_to_add: menteeSkillsToAdd,
+					update_mentorships: mentorSkills,
+					update_menteeships: menteeSkills
 				}
 			});
 
 			if (response.id) {
 				successMessage = 'Profile updated successfully!';
 				Swal.fire('Success', 'Profile updated successfully!', 'success');
+				mentorSkillsToAdd = [];
+				menteeSkillsToAdd = [];
 				user.set({ ...$user, ...response });
 			} else {
 				errorMessage = 'Something went wrong. Please try again.';
@@ -85,11 +98,25 @@
 		}
 	}
 
-	function selectSkill(payload, index) {
-		if ($user && $user.mode === 'Mentor') {
-			mentorSkills[index] = payload; // ✅ Update mentor skills at correct index
+	function addSkill() {
+		modals.open(SkillsModal, {
+			selectSkill: (payload) => selectSkill(payload)
+		});
+	}
+
+	function selectSkill(payload) {
+		if ($user.mode === 'Mentor') {
+			mentorSkillsToAdd = [
+				...mentorSkillsToAdd,
+				{ status: 'pending approval', skill: payload, company: '', profession: '' }
+			];
+			console.log({ mentorSkillsToAdd });
 		} else {
-			menteeSkills[index] = payload; // ✅ Update mentee skills at correct index
+			menteeSkillsToAdd = [
+				...menteeSkillsToAdd,
+				{ status: 'pending approval', skill: payload, company: '', profession: '' }
+			];
+			console.log({ menteeSkillsToAdd });
 		}
 		modals.close();
 	}
@@ -124,77 +151,86 @@
 			<input disabled type="email" bind:value={email} class="form-control" placeholder="Email" />
 		</div>
 
-		<div class="mb-3">
-			<label class="form-label">Profession</label>
-			<input
-				type="text"
-				bind:value={profession}
-				class="form-control"
-				placeholder="Your Profession"
-			/>
-		</div>
-
-		<div class="mb-3">
-			<label class="form-label">Company</label>
-			<input type="text" bind:value={company} class="form-control" placeholder="Your Company" />
-		</div>
-
 		{#if $user && $user.mode === 'Mentor'}
 			<div class="mb-3">
-				<label class="form-label">Willing to Mentor In: (Select up to 3)</label>
-				{#each Array(3) as _, index}
-					<div
-						class="flex"
-						on:click={() => {
-							modals.open(SkillsModal, {
-								selectSkill: (payload) => selectSkill(payload, index)
-							});
-						}}
-					>
-						<div class="flex-grow flex-90" style="margin-bottom: 10px;">
-							{#if mentorSkills[index] && mentorSkills[index].title}
-								<Comic>{mentorSkills[index].title}</Comic>
+				<label class="form-label"
+					>{$user.mode === 'Mentor' ? 'Willing to Mentor In:' : 'Seeking Mentors In:'}</label
+				>
+
+				{#each $user.mode === 'Mentor' ? mentorSkills : menteeSkills as mentorship, index}
+					<div class="skill-box">
+						<div class="skill-header {mentorship.status.replace(' ', '_')}">
+							{#if mentorship.status === 'approved'}
+								<i class="fa fa-check-circle approved approval-badge"></i>
 							{:else}
-								<div
-									class="form-control"
-									class:gray={!mentorSkills[index] || !mentorSkills[index].title}
+								<span class="fa fa-clock waiting approval-badge"></span>
+							{/if}
+							<div on:click={() => toggleMentorship(mentorship.id)}>
+								<Comic>{mentorship.skill.title}</Comic>
+							</div>
+							{#if expandedMentorhips.includes(mentorship.id)}
+								<label
+									for=""
+									style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+									>Title/Role/Profession</label
 								>
-									Select Expertise...
-								</div>
+								<input
+									type="text"
+									bind:value={mentorship.profession}
+									class="form-control mt-2"
+									placeholder="Example: Software Engineer, Researcher"
+								/>
+								<label
+									for=""
+									style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+									>Applied at: (Company Name)</label
+								>
+								<input
+									type="text"
+									bind:value={mentorship.company}
+									class="form-control mt-2"
+									placeholder="Example: Paypal, Stanford University"
+								/>
 							{/if}
-						</div>
-						<div class="flex-grow flex-10 btn">
-							<i class="fa fa-wrench"></i>
 						</div>
 					</div>
 				{/each}
-			</div>
-		{:else}
-			<div class="mb-3">
-				<label class="form-label">Seeking Mentors In: (Select up to 3)</label>
-				{#each menteeSkills as skill, index}
-					<div
-						class="flex"
-						on:click={() => {
-							modals.open(SkillsModal, {
-								selectSkill: (payload) => selectSkill(payload, index)
-							});
-						}}
-					>
-						<div class="flex-grow flex-90">
-							{#if skill && skill.title}
-								<Comic>{skill.title}</Comic>
-							{:else}
-								<div class="form-control" class:gray={!skill || !skill.title}>
-									{skill ? skill.title : 'Select Expertise...'}
-								</div>
-							{/if}
-						</div>
-						<div class="flex-grow flex-10 btn">
-							<i class="fa fa-expand"></i>
+
+				{#each $user.mode === 'Mentor' ? mentorSkillsToAdd : menteeSkillsToAdd as mentorship, index}
+					<div class="skill-box">
+						<div class="skill-header pending_approval">
+							<span class="fa fa-clock waiting approval-badge"></span>
+
+							<Comic>{mentorship.skill.title}</Comic>
+							<label
+								for=""
+								style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+								>Title/Role/Profession</label
+							>
+							<input
+								type="text"
+								bind:value={mentorship.profession}
+								class="form-control mt-2"
+								placeholder="Example: Software Engineer, Researcher"
+							/>
+							<label
+								for=""
+								style="text-align: left;display: block;margin-top: 20px;margin-left: 6px;"
+								>Applied at: (Company Name)</label
+							>
+							<input
+								type="text"
+								bind:value={mentorship.company}
+								class="form-control mt-2"
+								placeholder="Example: Paypal, Stanford University"
+							/>
 						</div>
 					</div>
 				{/each}
+
+				<button class="btn btn-outline-secondary w-100 mt-2" on:click={addSkill}
+					>Add another skill +</button
+				>
 			</div>
 		{/if}
 
@@ -231,5 +267,55 @@
 
 	.gray {
 		background-color: #e4e4e4;
+	}
+
+	.skill-box {
+		background: #f1f1f1;
+		padding: 10px;
+		border-radius: 8px;
+		margin-bottom: 10px;
+	}
+	.skill-header {
+		cursor: pointer;
+		background: white;
+		padding: 10px;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+		text-align: center;
+		position: relative;
+	}
+
+	.approval-badge {
+		display: none;
+		position: absolute;
+		top: -13px;
+		right: -30px;
+		font-size: 10px;
+		width: 84px;
+		z-index: 99;
+	}
+
+	.approval-badge.waiting {
+		font-size: 34px;
+		color: #787878;
+		top: -9px;
+		right: -34px;
+		z-index: 99;
+	}
+
+	.approval-badge.approved {
+		font-size: 34px;
+		color: green;
+		top: -9px;
+		right: -34px;
+		z-index: 99;
+	}
+
+	.skill-header :global(button) {
+		width: 100%;
+	}
+
+	.pending_approval :global(button) {
+		--yellow-400: #ccc;
 	}
 </style>

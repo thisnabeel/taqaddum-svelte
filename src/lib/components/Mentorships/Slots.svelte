@@ -1,15 +1,14 @@
 <script>
 	import { user } from '$lib/stores/user';
+	import MeetingSlotsGuide from '../Guide/MeetingSlots.svelte';
 	import Offering from './Offerings/Offering.svelte';
 
 	export let meetups = [];
 	export let slotsAdmin = false;
-	let showGuide = false;
 
 	// Filters for status
 	let filters = {
-		potential: true,
-		locked: true,
+		open: true,
 		denied: true
 	};
 
@@ -20,65 +19,13 @@
 <div class="container">
 	<!-- Toggleable Guide -->
 	{#if slotsAdmin}
-		<div class="accordion">
-			<button class="accordion-header" on:click={() => (showGuide = !showGuide)}>
-				{showGuide ? 'Click here to hide ' : 'Click here to show '}
-				<b style="margin-left: 4px">Guide to Meeting Slots</b>
-			</button>
-			{#if showGuide}
-				<div class="accordion-content">
-					<!-- Explanation -->
-					<div class="explanation">
-						<h3>How Your Meetup Slots Are Generated</h3>
-						<p>
-							Potential meetups are automatically created based on your offerings and
-							availabilities. These are not confirmed bookings yet—only placeholders for possible
-							sessions.
-						</p>
-					</div>
-
-					<!-- Status Legend (Table) -->
-					<div class="legend-container">
-						<table class="legend-table">
-							<thead>
-								<tr>
-									<th>Status</th>
-									<th>Icon</th>
-									<th>Description</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><span class="legend-text">Locked</span></td>
-									<td><i class="fa fa-lock legend-icon locked" /></td>
-									<td>Confirmed and scheduled meetings.</td>
-								</tr>
-								<tr>
-									<td><span class="legend-text">Potential</span></td>
-									<td><i class="fa fa-circle-o legend-icon" /></td>
-									<td>Unbooked slots based on your availability.</td>
-								</tr>
-								<tr>
-									<td><span class="legend-text">Blocked Potential</span></td>
-									<td><i class="fa fa-times-circle legend-icon blocked" /></td>
-									<td>Slots that are unavailable for booking.</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			{/if}
-		</div>
+		<MeetingSlotsGuide></MeetingSlotsGuide>
 
 		<!-- Filter Bar -->
 		<div class="filter-bar">
 			<label>
-				<input type="checkbox" bind:checked={filters.locked} />
-				Locked
-			</label>
-			<label>
-				<input type="checkbox" bind:checked={filters.potential} />
-				Potential
+				<input type="checkbox" bind:checked={filters.open} />
+				Open
 			</label>
 			<label>
 				<input type="checkbox" bind:checked={filters.denied} />
@@ -115,34 +62,6 @@
 		background: white;
 	}
 
-	/* Accordion */
-	.accordion {
-		margin-bottom: 15px;
-	}
-
-	.accordion-header {
-		width: 100%;
-		background: #f8f9fa;
-		border: 1px solid #ddd;
-		padding: 10px;
-		font-size: 16px;
-		text-align: left;
-		cursor: pointer;
-		display: flex;
-		justify-content: initial;
-		align-items: center;
-		border-radius: 6px;
-		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-	}
-
-	.accordion-content {
-		padding: 10px;
-		background: #ffffff;
-		border-radius: 6px;
-		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-		animation: fadeIn 0.3s ease-in-out;
-	}
-
 	/* Filter Bar */
 	.filter-bar {
 		display: flex;
@@ -161,53 +80,6 @@
 		gap: 5px;
 		font-size: 14px;
 		cursor: pointer;
-	}
-
-	/* Legend Table */
-	.legend-container {
-		overflow-x: auto;
-		margin-bottom: 10px;
-	}
-
-	.legend-table {
-		width: 100%;
-		border-collapse: collapse;
-		background: #f8f9fa;
-		border-radius: 6px;
-		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-	}
-
-	.legend-table th,
-	.legend-table td {
-		padding: 10px;
-		text-align: left;
-		border-bottom: 1px solid #ddd;
-	}
-
-	.legend-table th {
-		background: #e9ecef;
-	}
-
-	.legend-text {
-		font-weight: bold;
-	}
-
-	.legend-icon {
-		font-size: 20px;
-		vertical-align: middle;
-	}
-
-	/* Colors for status */
-	.potential {
-		color: #000;
-	}
-
-	.blocked {
-		color: #ccc;
-	}
-
-	.locked {
-		color: #2ecc71;
 	}
 
 	/* Meetup List */
@@ -237,15 +109,6 @@
 		.filter-bar {
 			flex-direction: column;
 			align-items: center;
-		}
-
-		.legend-table {
-			font-size: 14px;
-		}
-
-		.legend-table th,
-		.legend-table td {
-			padding: 8px;
 		}
 	}
 </style>
