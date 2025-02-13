@@ -38,8 +38,14 @@
 	<ul class="meetup-list">
 		{#if filteredMeetups.length < 1}
 			<div class="jumbotron">
-				<h2>No matching slots available.</h2>
-				<h4>Try changing the filters above.</h4>
+				{#if slotsAdmin}
+					<h2>No matching slots available.</h2>
+					<h4>Try changing the filters above.</h4>
+				{:else}
+					<h1>Uh-oh</h1>
+					<h2>This mentor has no slots available yet, please check back at a later time.</h2>
+					<h3><div class="btn btn-warning">Click to send Encouragement</div></h3>
+				{/if}
 			</div>
 		{/if}
 		{#each filteredMeetups as meetup}

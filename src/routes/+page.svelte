@@ -35,12 +35,8 @@
 
 	@media (max-width: 768px) {
 		.mentors .list {
-			display: flex;
-			/* justify-content: center; */
-			gap: 20px;
-			padding: 20px;
+			justify-content: left;
 			overflow-y: scroll;
-			width: 100%;
 		}
 	}
 </style>
