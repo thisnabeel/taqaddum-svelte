@@ -2,25 +2,11 @@
 	import { onMount } from 'svelte';
 	import Comic from '../Buttons/comic.svelte';
 	import API from '$lib/api/api';
+	import { user } from '$lib/stores/user';
 
 	export let mentor;
 
-	let mentorSkills = [];
-
-	$: fetchMentorships(mentor);
-
-	async function fetchMentorships(mentor) {
-		try {
-			const endpoint = mentor.id ? `/mentorships?user_id=${mentor.id}` : '/mentorships';
-			const response = await API.get(endpoint);
-			console.log({ response });
-			mentorSkills = response.map((r) => r.skill);
-			console.log({ mentorSkills });
-			// mentorSkills = response || [];
-		} catch (error) {
-			console.error('Error fetching mentorships:', error);
-		}
-	}
+	export let mentorships = [];
 </script>
 
 <div class="mentor-profile">
@@ -42,8 +28,8 @@
 		</div>
 	</div>
 	<div class="skills">
-		{#each mentorSkills as skill}
-			<Comic>{skill.title}</Comic>
+		{#each mentorships as mentorship}
+			<Comic>{mentorship.skill.title}</Comic>
 		{/each}
 	</div>
 </div>

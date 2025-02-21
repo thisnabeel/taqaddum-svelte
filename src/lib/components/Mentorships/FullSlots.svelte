@@ -6,7 +6,6 @@
 	import { onMount } from 'svelte';
 	import { DateTime } from 'luxon';
 	import NewSlot from './NewSlot.svelte';
-	import Slot from './Slot.svelte';
 
 	export let meetups = [];
 	export let slotsAdmin = false;
@@ -53,7 +52,7 @@
 	let calculatedEndTime = '';
 
 	user.subscribe((u) => {
-		// fetchMeetingOfferings();
+		fetchMeetingOfferings();
 	});
 
 	async function fetchMeetingOfferings() {
@@ -138,15 +137,22 @@
 			alert('Failed to create slot.');
 		}
 	}
-
-	function appendToList(payload) {
-		filteredMeetups = [...filteredMeetups, payload];
-		showAccordion = false;
-	}
 </script>
 
 <div class="container">
 	{#if slotsAdmin}
+		<MeetingSlotsGuide />
+		<div class="filter-bar">
+			<label>
+				<input type="checkbox" bind:checked={filters.open} />
+				Open
+			</label>
+			<label>
+				<input type="checkbox" bind:checked={filters.denied} />
+				Cancelled
+			</label>
+		</div>
+
 		<!-- Accordion for Adding Slots -->
 		<div class="accordion">
 			<button
@@ -160,7 +166,7 @@
 			{#if showAccordion}
 				<div class="accordion-content">
 					<!-- Inline Slot Creator -->
-					<NewSlot {mentorships} {appendToList}></NewSlot>
+					<NewSlot {mentorships}></NewSlot>
 				</div>
 			{/if}
 		</div>
@@ -205,8 +211,13 @@
 				{/if}
 			</div>
 		{/if}
-		{#each filteredMeetups as slot}
-			<Slot {slot}></Slot>
+		{#each filteredMeetups as meetup}
+			<Offering
+				{slotsAdmin}
+				offering={meetup.offering}
+				slotDetails={meetup}
+				status={meetup.status}
+			/>
 		{/each}
 	</ul>
 </div>

@@ -12,19 +12,35 @@
 	let list = {};
 	let mentor;
 	let loadingMeetups = true;
+	let mentorships = [];
 
 	async function fetchUser() {
 		const res = await API.get('/open_slots?user_id=' + $user.id);
 		console.log({ res });
-		list = res;
-		mentor = res.mentor;
+		list.potential_meetups = res.slots;
+		mentor = res.user;
 		loadingMeetups = false;
+	}
+
+	$: fetchMentorships(mentor);
+
+	async function fetchMentorships(mentor) {
+		if (!mentor) return;
+		try {
+			const endpoint = mentor.id ? `/mentorships?user_id=${mentor.id}` : '/mentorships';
+			mentorships = await API.get(endpoint);
+
+			// user.set({ ...user, mentorships: response });
+			// mentorSkills = response || [];
+		} catch (error) {
+			console.error('Error fetching mentorships:', error);
+		}
 	}
 </script>
 
 {#if mentor}
 	<!-- 🔹 Mentor Profile Spotlight Section -->
-	<Header {mentor}></Header>
+	<Header {mentor} {mentorships}></Header>
 {/if}
 
 <!-- 🔹 Available Slots Section -->
@@ -35,7 +51,7 @@
 		</div>
 	</div>
 {:else}
-	<Slots meetups={list.potential_meetups} slotsAdmin={true}></Slots>
+	<Slots meetups={list.potential_meetups} {mentorships} slotsAdmin={true}></Slots>
 {/if}
 
 <style>

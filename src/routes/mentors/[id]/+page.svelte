@@ -9,6 +9,7 @@
 	let list = {};
 	let mentor = null;
 	let loadingMeetups = true;
+	let mentorships = [];
 
 	let loading = true;
 
@@ -19,15 +20,20 @@
 	async function fetchUser() {
 		const res = await API.get('/open_slots?user_id=' + page.params.id);
 		console.log({ res });
-		list = res;
-		mentor = res.mentor;
+		// list = res;
+		list.potential_meetups = res.slots;
+		mentor = res.user;
+
+		mentorships = Array.from(
+			new Map(list.potential_meetups.map((m) => [m.skill.id, { skill: m.skill }])).values()
+		);
 		loadingMeetups = false;
 	}
 </script>
 
 {#if mentor}
 	<!-- 🔹 Mentor Profile Spotlight Section -->
-	<Header {mentor}></Header>
+	<Header {mentor} {mentorships}></Header>
 {/if}
 
 {#if loadingMeetups}

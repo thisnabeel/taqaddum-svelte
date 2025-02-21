@@ -13,7 +13,7 @@
 	export let readOnly = true;
 	export let slotDetails;
 	export let slotsAdmin;
-
+	export let status;
 	export let editing = false;
 
 	async function startChatRoom(slotDetails) {

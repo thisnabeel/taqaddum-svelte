@@ -40,7 +40,7 @@
 	<ul class="nav-links {menuOpen ? 'open' : ''}">
 		{#if $user}
 			{#if $userView === 'mentor'}
-				<li>
+				<!-- <li>
 					<a href="/users/offerings" on:click={() => (menuOpen = false)}
 						><i class="fa fa-university"></i> My Offerings +</a
 					>
@@ -49,7 +49,7 @@
 					<a href="/users/calendar" on:click={() => (menuOpen = false)}
 						><i class="fa fa-calendar"></i> My Availability =</a
 					>
-				</li>
+				</li> -->
 				<li>
 					<a href="/users/slots" on:click={() => (menuOpen = false)}
 						><i class="fa fa-lightbulb-o"></i> My Slots</a
