@@ -33,7 +33,8 @@
 			const response = await API.post('/users/sign_in', {
 				user: {
 					email: email,
-					password: password
+					password: password,
+					type: formFor
 				}
 			});
 

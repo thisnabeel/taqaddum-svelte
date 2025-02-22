@@ -5,6 +5,7 @@
 	import { user } from '$lib/stores/user';
 	import Swal from 'sweetalert2';
 	import { goto } from '$app/navigation';
+	import API from '$lib/api/api';
 
 	export let mentorships = [];
 	export let slot;
@@ -64,6 +65,16 @@
 			.join('')
 			.slice(0, 10);
 	}
+
+	async function bookMeeting() {
+		Swal.fire('Booking your spot...', 'Please hold');
+		await API.post('/slot_bookings', {
+			user_id: $user.id,
+			slot_id: slot.id
+		});
+		Swal.close();
+		Swal.fire('Done', 'Your spot has been booked', 'success');
+	}
 </script>
 
 <div class="editable-slot">
@@ -93,16 +104,23 @@
 				</div>
 			</b>
 		</div>
-		<div
-			class="btn btn-outline-primary flex-30 flex-grow create-btn"
-			on:click={() => startChatRoom()}
-		>
-			{#if $user && $user.id === slot.user_id}
+		{#if $user && $user.id === slot.user_id}
+			<div
+				class="btn btn-outline-primary flex-30 flex-grow create-btn"
+				on:click={() => startChatRoom()}
+			>
 				Enter Meeting
-			{:else}
+			</div>
+		{:else}
+			<div
+				class="btn btn-outline-primary flex-30 flex-grow create-btn"
+				on:click={() => {
+					bookMeeting();
+				}}
+			>
 				Book Meeting
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</small>
 </div>
 

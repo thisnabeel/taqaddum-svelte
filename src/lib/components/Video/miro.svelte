@@ -4,7 +4,7 @@
 	export let code;
 	export let user;
 
-	let src = `https://sfu.mirotalk.com/join?room=${code}&roomPassword=0&name=${user.first_name + ' ' + user.last_name}&audio=0&video=0&screen=0&hide=0&notify=0&duration=unlimited`;
+	let src = `https://sfu.mirotalk.com/join?room=${code}&roomPassword=0&name=${user.type + ' ' + user.first_name + ' ' + user.last_name + '_' + user.id}&audio=1&video=1&screen=0&hide=0&notify=0&duration=unlimited`;
 </script>
 
 <iframe

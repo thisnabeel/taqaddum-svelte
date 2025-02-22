@@ -5,38 +5,38 @@
 	import { writable } from 'svelte/store';
 
 	let activeTab = 'pending';
-	let mentors = writable({ pending: [], approved: [] });
+	let mentees = writable({ pending: [], approved: [] });
 
-	async function fetchMentors() {
+	async function fetchMentees() {
 		try {
-			const response = await API.get('/list/mentors');
+			const response = await API.get('/list/mentees');
 
-			mentors.set({
+			mentees.set({
 				pending: response['pending approval'] || [],
 				approved: response['approved'] || []
 			});
 		} catch (error) {
-			console.error('Error fetching mentors:', error);
+			console.error('Error fetching mentees:', error);
 		}
 	}
 
-	async function toggleStatus(mentorship) {
-		const newStatus = mentorship.status === 'pending approval' ? 'approved' : 'pending approval';
+	async function toggleStatus(menteeship) {
+		const newStatus = menteeship.status === 'pending approval' ? 'approved' : 'pending approval';
 
 		try {
-			await API.put(`/mentorships/${mentorship.id}`, { id: mentorship.id, status: newStatus });
-			fetchMentors(); // Refresh list after update
+			await API.put(`/menteeships/${menteeship.id}`, { id: menteeship.id, status: newStatus });
+			fetchMentees(); // Refresh list after update
 		} catch (error) {
 			console.error('Error updating status:', error);
 		}
 	}
 
-	onMount(fetchMentors);
+	onMount(fetchMentees);
 </script>
 
 <AdminWall>
 	<div class="container mt-4">
-		<h1 class="text-center">Mentors Management</h1>
+		<h1 class="text-center">Mentees Management</h1>
 
 		<!-- Tabs -->
 		<ul class="nav nav-tabs justify-content-center">
@@ -69,36 +69,36 @@
 				</thead>
 				<tbody>
 					{#if activeTab === 'pending'}
-						{#each $mentors.pending || [] as mentorship}
+						{#each $mentees.pending || [] as menteeship}
 							<tr>
 								<td>
-									<a href="/mentors/{mentorship.user.id}"
-										>{mentorship.user.first_name} {mentorship.user.last_name}</a
+									<a href="/mentees/{menteeship.user.id}"
+										>{menteeship.user.first_name} {menteeship.user.last_name}</a
 									>
 								</td>
-								<td><b>{mentorship.profession}</b> <br />@ {mentorship.company}</td>
-								<td>{mentorship.skill.title}</td>
+								<td><b>{menteeship.profession}</b> <br />@ {menteeship.company}</td>
+								<td>{menteeship.skill.title}</td>
 								<td>
-									<button class="btn btn-primary btn-sm" on:click={() => toggleStatus(mentorship)}
+									<button class="btn btn-primary btn-sm" on:click={() => toggleStatus(menteeship)}
 										>Approve</button
 									>
 								</td>
 							</tr>
 						{/each}
 					{:else}
-						{#each $mentors.approved || [] as mentorship}
+						{#each $mentees.approved || [] as menteeship}
 							<tr>
 								<td>
-									<a href="/mentors/{mentorship.user.id}"
-										>{mentorship.user.first_name} {mentorship.user.last_name}</a
+									<a href="/mentees/{menteeship.user.id}"
+										>{menteeship.user.first_name} {menteeship.user.last_name}</a
 									>
 								</td>
-								<td><b>{mentorship.profession}</b> <br />@ {mentorship.company}</td>
-								<td>{mentorship.skill.title}</td>
+								<td><b>{menteeship.profession}</b> <br />@ {menteeship.company}</td>
+								<td>{menteeship.skill.title}</td>
 								<td>
 									<button
 										class="btn btn-outline-danger btn-sm"
-										on:click={() => toggleStatus(mentorship)}>Revoke</button
+										on:click={() => toggleStatus(menteeship)}>Revoke</button
 									>
 								</td>
 							</tr>

@@ -108,7 +108,8 @@
 					profession,
 					company,
 					mentor_skills: mentorSkills.filter((s) => s),
-					mentee_skills: menteeSkills.filter((s) => s)
+					mentee_skills: menteeSkills.filter((s) => s),
+					type: formFor
 				}
 			});
 
@@ -155,6 +156,7 @@
 				raiseError(data.error || 'Something went wrong. Please try again.');
 			}
 		} catch (error) {
+			Swal.close();
 			raiseError('Network error. Please try again.');
 		}
 	}
@@ -174,7 +176,7 @@
 				<button class="btn btn-outline-primary w-100 mb-2" on:click={() => (formFor = 'Mentor')}>
 					I'm a Mentor
 				</button>
-				<button class="btn btn-outline-primary w-100" on:click={() => (formFor = 'Mentee')}>
+				<button class="btn btn-outline-primary w-100 mb-2" on:click={() => (formFor = 'Mentee')}>
 					I'm a Mentee
 				</button>
 			</div>

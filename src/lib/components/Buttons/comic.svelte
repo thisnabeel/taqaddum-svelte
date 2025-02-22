@@ -1,9 +1,17 @@
+<script>
+	export let status = 'approved';
+</script>
+
 <!-- From Uiverse.io by augustin_4687 -->
-<button class="button">
+<button class="button" class:gray={status === 'pending approval'}>
 	<div><span><slot /></span></div>
 </button>
 
 <style>
+	.gray {
+		background-color: #ccc !important;
+		--yellow-400: #d6d6d6 !important;
+	}
 	/* From Uiverse.io by augustin_4687 */
 	.button {
 		--stone-50: #fafaf9;

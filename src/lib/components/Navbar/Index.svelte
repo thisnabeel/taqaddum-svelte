@@ -39,7 +39,7 @@
 	<!-- Nav Links (Hidden in Mobile by Default) -->
 	<ul class="nav-links {menuOpen ? 'open' : ''}">
 		{#if $user}
-			{#if $userView === 'mentor'}
+			{#if $user.type === 'Mentor'}
 				<!-- <li>
 					<a href="/users/offerings" on:click={() => (menuOpen = false)}
 						><i class="fa fa-university"></i> My Offerings +</a
@@ -55,15 +55,10 @@
 						><i class="fa fa-lightbulb-o"></i> My Slots</a
 					>
 				</li>
-			{:else if $userView === 'mentee'}
+			{:else if $user.type === 'Mentee'}
 				<li>
-					<a href="/users/calendar" on:click={() => (menuOpen = false)}
-						><i class="fa fa-calendar"></i> My Availability</a
-					>
-				</li>
-				<li>
-					<a href="/users/slots" on:click={() => (menuOpen = false)}
-						><i class="fa fa-lightbulb-o"></i> Recommended Sessions</a
+					<a href="/" on:click={() => (menuOpen = false)}
+						><i class="fa fa-lightbulb-o"></i> Dashboard</a
 					>
 				</li>
 			{/if}

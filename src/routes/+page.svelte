@@ -3,6 +3,9 @@
 	import MentorCard from '$lib/components/MentorCard/Index.svelte';
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
+	import { user } from '$lib/stores/user';
+	import MentorDashboard from '$lib/components/Mentor/Dashboard/Dashboard.svelte';
+	import MenteeDashboard from '$lib/components/Mentee/Dashboard/Dashboard.svelte';
 
 	let mentors = [];
 
@@ -15,15 +18,21 @@
 	}
 </script>
 
-<Hero />
-<section class="mentors">
-	<h1 class="text-center">Vetted Mentors:</h1>
-	<div class="list">
-		{#each mentors as mentorship}
-			<MentorCard mentor={mentorship.user} {mentorship} />
-		{/each}
-	</div>
-</section>
+{#if $user && $user.type === 'Mentor'}
+	<MentorDashboard></MentorDashboard>
+{:else if $user && $user.type === 'Mentee'}
+	<MenteeDashboard></MenteeDashboard>
+{:else}
+	<Hero />
+	<section class="mentors">
+		<h1 class="text-center">Vetted Mentors:</h1>
+		<div class="list">
+			{#each mentors as mentorship}
+				<MentorCard mentor={mentorship.user} {mentorship} />
+			{/each}
+		</div>
+	</section>
+{/if}
 
 <style>
 	.mentors .list {
