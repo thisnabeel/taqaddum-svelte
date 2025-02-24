@@ -149,7 +149,7 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header bg-success bg-opacity-10">
-						<h3 class="h5 mb-0">Actively Seeking in Mentors in:</h3>
+						<h3 class="h5 mb-0">Actively Seeking Mentors in:</h3>
 					</div>
 					<div class="card-body">
 						{#if dashboard.menteeships.approved.length > 0}
