@@ -51,8 +51,11 @@
 					>
 				</li> -->
 				<li>
+					<a href="/" on:click={() => (menuOpen = false)}><i class="fa fa-home"></i> Dashboard</a>
+				</li>
+				<li>
 					<a href="/users/slots" on:click={() => (menuOpen = false)}
-						><i class="fa fa-lightbulb-o"></i> My Slots</a
+						><i class="fa fa-lightbulb-o"></i> My Events</a
 					>
 				</li>
 			{:else if $user.type === 'Mentee'}

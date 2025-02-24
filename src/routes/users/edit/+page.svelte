@@ -8,6 +8,8 @@
 	import SkillsModal from '$lib/components/Skills/SkillsModal.svelte';
 	import Swal from 'sweetalert2';
 	import Comic from '$lib/components/Buttons/comic.svelte';
+	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 
 	let first_name = '';
 	let last_name = '';
@@ -39,6 +41,10 @@
 			menteeSkills = response.mentee_skills || [];
 			console.log({ response });
 			fetchMentorships();
+		}
+
+		if (!response) {
+			goto('/');
 		}
 	});
 
