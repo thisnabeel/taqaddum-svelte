@@ -48,12 +48,33 @@
 
 	async function bookMeeting(slot) {
 		Swal.fire('Booking your spot...', 'Please hold');
-		await API.post('/slot_bookings', {
+		const res = await API.post('/slot_bookings', {
 			user_id: $user.id,
 			slot_id: slot.id
 		});
+		dashboard.bookings = [...dashboard.bookings, res];
 		Swal.close();
 		Swal.fire('Done', 'Your spot has been booked', 'success');
+	}
+
+	$: console.log('dashboard ', dashboard);
+
+	$: upcomingSessions = (sessions) => {
+		return sessions.filter((s) => !dashboard.bookings.map((b) => b.slot.id).includes(s.id));
+	};
+
+	async function dropOutOfMeeting(booking) {
+		let text;
+		if (confirm('Are you sure you want to drop out of this meeting?') == true) {
+			text = 'You pressed OK!';
+			Swal.fire('Withdrawing from booking', 'Please Hold...');
+			await API.delete(`/slot_bookings/${booking.id}`);
+			dashboard.bookings = dashboard.bookings.filter((b) => b.id !== booking.id);
+			Swal.fire('Done!', 'You are no longer included in this meeting');
+		} else {
+			text = 'You canceled!';
+		}
+		console.log(booking);
 	}
 </script>
 
@@ -61,7 +82,7 @@
 	{#if dashboard}
 		<div class="row">
 			<div class="col-12 mb-4">
-				<h2 class="display-6 mb-3">My Dashboard</h2>
+				<h2 class="display-6 mb-3">Your Dashboard</h2>
 			</div>
 		</div>
 
@@ -70,7 +91,7 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header bg-primary bg-opacity-10">
-						<h3 class="h5 mb-0">My Schedule</h3>
+						<h3 class="h5 mb-0">Your Schedule:</h3>
 					</div>
 					<div class="card-body">
 						{#if dashboard.bookings && dashboard.bookings.length > 0}
@@ -82,12 +103,20 @@
 												<div class="fw-bold">{booking.slot.title}</div>
 												<div class="text-muted small">{booking.slot.skill.title}</div>
 											</div>
-											<a
-												class="btn btn-info btn-sm"
-												on:click={() => {
-													startChatRoom(booking.slot);
-												}}>Enter Meeting</a
-											>
+											<div class="meeting-options">
+												<a
+													class="btn btn-info btn-sm"
+													on:click={() => {
+														startChatRoom(booking.slot);
+													}}>Enter Meeting</a
+												>
+												<div
+													class="btn btn-outline-danger"
+													on:click={() => dropOutOfMeeting(booking)}
+												>
+													<div class="fa fa-times"></div>
+												</div>
+											</div>
 										</div>
 
 										<div class="d-flex align-items-center gap-2 mb-2">
@@ -202,6 +231,12 @@
 															startChatRoom(booking.slot);
 														}}>Enter Meeting</a
 													>
+													<div
+														class="btn btn-outline-danger"
+														on:click={() => dropOutOfMeeting(booking)}
+													>
+														<div class="fa fa-times"></div>
+													</div>
 												</td>
 											</tr>
 										{/each}
@@ -209,7 +244,7 @@
 								</table>
 							</div>
 						{:else}
-							<p class="text-muted mb-0">No sessions scheduled yet.</p>
+							<p class="text-muted mb-0">No Upcoming Meetings...</p>
 						{/if}
 					</div>
 				</div>
@@ -323,7 +358,7 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header bg-info bg-opacity-10">
-						<h3 class="h5 mb-0">Available Mentors</h3>
+						<h3 class="h5 mb-0">Matched Mentors for You:</h3>
 					</div>
 					<div class="card-body">
 						{#if dashboard.mentors.pool.length > 0}
@@ -382,11 +417,12 @@
 			</div>
 		</div>
 
+		<br />
 		<div class="row mb-4">
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header bg-primary bg-opacity-10">
-						<h3 class="h5 mb-0">Upcoming Sessions</h3>
+						<h3 class="h5 mb-0">Other Upcoming Sessions for You:</h3>
 					</div>
 					<div class="card-body">
 						{#if dashboard.mentors.sessions && dashboard.mentors.sessions.length > 0}
@@ -406,56 +442,60 @@
 									<div class="skill-group mb-4">
 										<h4 class="h6 border-bottom pb-2 mb-3">{skillTitle}</h4>
 
-										{#each sessions as session}
-											<div class="session-card p-3 mb-3 border rounded">
-												<div class="d-flex justify-content-between align-items-start mb-3">
-													<div>
-														<div class="fw-bold">{session.title}</div>
+										{#if upcomingSessions(sessions).length < 1}
+											<p>No Upcoming Sessions in this Category</p>
+										{:else}
+											{#each upcomingSessions(sessions) as session}
+												<div class="session-card p-3 mb-3 border rounded">
+													<div class="d-flex justify-content-between align-items-start mb-3">
+														<div>
+															<div class="fw-bold">{session.title}</div>
+														</div>
+														<a
+															class="btn btn-info btn-sm"
+															on:click={() => {
+																bookMeeting(session);
+															}}>Book Meeting</a
+														>
 													</div>
-													<a
-														class="btn btn-info btn-sm"
-														on:click={() => {
-															bookMeeting(session);
-														}}>Book Meeting</a
-													>
-												</div>
 
-												<div class="d-flex align-items-center gap-2 mb-2">
-													<img
-														src={session.user.avatar_cropped_url}
-														class="mentor-avatar"
-														alt="mentor avatar"
-													/>
-													<div>
-														{session.user.first_name}
+													<div class="d-flex align-items-center gap-2 mb-2">
+														<img
+															src={session.user.avatar_cropped_url}
+															class="mentor-avatar"
+															alt="mentor avatar"
+														/>
+														<div>
+															{session.user.first_name}
+														</div>
 													</div>
-												</div>
 
-												<div class="text-muted">
-													<div>
-														{new Date(session.start_time).toLocaleDateString('en-US', {
-															weekday: 'short',
-															month: 'short',
-															day: 'numeric',
-															year: 'numeric'
-														})}
-													</div>
-													<div class="small">
-														{new Date(session.start_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: session.timezone
-														})} -
-														{new Date(session.end_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: session.timezone
-														})}
-														({session.timezone})
+													<div class="text-muted">
+														<div>
+															{new Date(session.start_time).toLocaleDateString('en-US', {
+																weekday: 'short',
+																month: 'short',
+																day: 'numeric',
+																year: 'numeric'
+															})}
+														</div>
+														<div class="small">
+															{new Date(session.start_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: session.timezone
+															})} -
+															{new Date(session.end_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: session.timezone
+															})}
+															({session.timezone})
+														</div>
 													</div>
 												</div>
-											</div>
-										{/each}
+											{/each}
+										{/if}
 									</div>
 								{/each}
 							</div>
@@ -475,7 +515,9 @@
 													</tr>
 												</thead>
 												<tbody>
-													{#each sessions as session}
+													{#each sessions.filter((s) => !dashboard.bookings
+																.map((b) => b.slot.id)
+																.includes(s.id)) as session}
 														<tr>
 															<td>
 																<div class="fw-bold">{session.title}</div>
@@ -519,9 +561,17 @@
 																<a
 																	class="btn btn-info"
 																	on:click={() => {
-																		startChatRoom(session);
-																	}}>Enter Meeting</a
+																		if (
+																			!dashboard.bookings.map((b) => b.slot.id).includes(session.id)
+																		) {
+																			bookMeeting(session);
+																		} else {
+																			startChatRoom(session);
+																		}
+																	}}
 																>
+																	Book Meeting
+																</a>
 															</td>
 														</tr>
 													{/each}
@@ -532,7 +582,7 @@
 								{/each}
 							</div>
 						{:else}
-							<p class="text-muted mb-0">No sessions scheduled yet.</p>
+							<p class="text-muted mb-0">No Upcoming Meetings...</p>
 						{/if}
 					</div>
 				</div>
@@ -550,6 +600,9 @@
 </div>
 
 <style>
+	.meeting-options {
+		display: inline-grid;
+	}
 	:global(.card) {
 		border-radius: 0.5rem;
 		border: 1px solid rgba(0, 0, 0, 0.125);
