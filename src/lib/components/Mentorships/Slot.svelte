@@ -193,9 +193,12 @@
 			<div
 				class="btn btn-outline-primary flex-30 flex-grow create-btn"
 				on:click={() => {
-					bookMeeting();
+					if ($user) bookMeeting();
 				}}
 			>
+				{#if !$user}
+					<i class="fa fa-lock"></i>{' '}
+				{/if}
 				Book Meeting
 			</div>
 		{/if}
