@@ -15,14 +15,14 @@
 	<p>{subtext}</p>
 
 	<div class="search-bar">
-		<Search placeholder={'Search by Expertise...'}></Search>
+		<!-- <Search placeholder={'Search by Expertise...'}></Search> -->
 		<!-- <select>
 			<option>Expertise</option>
 		</select>
 		<select>
 			<option>Country</option>
 		</select> -->
-		<button>Search</button>
+		<button>Get Started Today</button>
 	</div>
 
 	<ScrollingList></ScrollingList>
