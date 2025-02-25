@@ -77,14 +77,17 @@
 		console.log(booking);
 	}
 
-	$: groupedSessions = dashboard.mentors.sessions.reduce((acc, session) => {
-		const skillTitle = session.skill.title;
-		if (!acc[skillTitle]) {
-			acc[skillTitle] = [];
-		}
-		acc[skillTitle].push(session);
-		return acc;
-	}, {});
+	$: groupedSessions =
+		dashboard && dashboard.mentors
+			? dashboard.mentors.sessions.reduce((acc, session) => {
+					const skillTitle = session.skill.title;
+					if (!acc[skillTitle]) {
+						acc[skillTitle] = [];
+					}
+					acc[skillTitle].push(session);
+					return acc;
+				}, {})
+			: [];
 </script>
 
 <div class="container py-4">
