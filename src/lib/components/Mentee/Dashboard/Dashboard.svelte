@@ -4,6 +4,7 @@
 	import Comic from '$lib/components/Buttons/comic.svelte';
 	import { user } from '$lib/stores/user';
 	import { onMount } from 'svelte';
+	import Swal from 'sweetalert2';
 
 	let dashboard;
 
@@ -43,6 +44,16 @@
 			.map((b) => b.toString(16).padStart(2, '0'))
 			.join('')
 			.slice(0, 10);
+	}
+
+	async function bookMeeting(slot) {
+		Swal.fire('Booking your spot...', 'Please hold');
+		await API.post('/slot_bookings', {
+			user_id: $user.id,
+			slot_id: slot.id
+		});
+		Swal.close();
+		Swal.fire('Done', 'Your spot has been booked', 'success');
 	}
 </script>
 
@@ -401,7 +412,12 @@
 													<div>
 														<div class="fw-bold">{session.title}</div>
 													</div>
-													<a class="btn btn-info btn-sm" on:click={() => {}}>Book Meeting</a>
+													<a
+														class="btn btn-info btn-sm"
+														on:click={() => {
+															bookMeeting(session);
+														}}>Book Meeting</a
+													>
 												</div>
 
 												<div class="d-flex align-items-center gap-2 mb-2">
