@@ -193,7 +193,11 @@
 			<div
 				class="btn btn-outline-primary flex-30 flex-grow create-btn"
 				on:click={() => {
-					if ($user) bookMeeting();
+					if ($user) {
+						bookMeeting();
+					} else {
+						Swal.fire("Not Signed In, 'Please Sign in to book your spot','error");
+					}
 				}}
 			>
 				{#if !$user}
