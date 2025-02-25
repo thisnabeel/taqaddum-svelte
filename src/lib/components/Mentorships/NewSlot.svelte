@@ -14,6 +14,8 @@
 	export let editing = true;
 	export let appendToList;
 
+	let ideas = [];
+	let showIdeas = false;
 	let window = { datePicker: false, startTimePicker: false, endTimePicker: false };
 
 	let showDatePicker = false;
@@ -174,6 +176,19 @@
 		console.log(payload);
 		form.timezone = payload;
 	}
+
+	async function offeringsAI() {
+		if (showIdeas) {
+			showIdeas = false;
+			return;
+		}
+		const skill = mentorships.find((m) => m.id === form.mentorship_id).skill;
+		ideas = await API.post('/skills/offerings_ai', {
+			title: skill.title,
+			id: skill.id
+		});
+		showIdeas = true;
+	}
 </script>
 
 <div class="editable-form editing">
@@ -188,6 +203,26 @@
 	</select>
 
 	{#if form.mentorship_id}
+		<div class="btn btn-outline-warning offerings-ai" on:click={offeringsAI}>
+			<i class="fa fa-bolt"></i>
+		</div>
+		{#if ideas && showIdeas}
+			<div class="ideas">
+				{#each ideas as idea}
+					<div
+						class="idea-card"
+						on:click={() => {
+							form.title = idea.title;
+							form.description = idea.description;
+							showIdeas = false;
+						}}
+					>
+						<div class="idea-title">{idea.title}</div>
+						<div class="idea-description">{idea.description}</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 		<input
 			type="text"
 			class="title-input"
@@ -339,6 +374,53 @@
 	}
 	.actions .cancel {
 		color: gray;
+	}
+
+	.ideas {
+		position: absolute;
+		top: 50px;
+		left: 0;
+		background: #ffffe1;
+		padding: 20px;
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		z-index: 9999;
+		max-height: 290px;
+		overflow-y: auto;
+	}
+
+	/* Elegant idea card styling */
+	.idea-card {
+		background: #f9f9f9;
+		border: 1px solid #eee;
+		border-radius: 8px;
+		padding: 15px;
+		margin-bottom: 15px;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	/* Slight elevation effect on hover */
+	.idea-card:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	/* Styling for the title within each card */
+	.idea-title {
+		font-size: 18px;
+		font-weight: bold;
+		color: #333;
+		margin-bottom: 8px;
+	}
+
+	/* Styling for the description text */
+	.idea-description {
+		font-size: 14px;
+		color: #555;
+		line-height: 1.5;
 	}
 
 	input:focus-visible,

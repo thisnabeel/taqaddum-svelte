@@ -7,6 +7,7 @@
 	import { DateTime } from 'luxon';
 	import NewSlot from './NewSlot.svelte';
 	import Slot from './Slot.svelte';
+	import Swal from 'sweetalert2';
 
 	export let meetups = [];
 	export let slotsAdmin = false;
@@ -143,6 +144,16 @@
 		filteredMeetups = [...filteredMeetups, payload];
 		showAccordion = false;
 	}
+
+	async function destroySlot(slot) {
+		if (confirm('Are you sure you want to cancel this meeting?') == true) {
+			Swal.fire('Cancelling booking', 'Please Hold...');
+			await API.delete(`/slots/${slot.id}`);
+			filteredMeetups = filteredMeetups.filter((f) => f.id !== slot.id);
+			Swal.fire('Done!', 'The meeting has been cancelled and removed');
+		} else {
+		}
+	}
 </script>
 
 <div class="container">
@@ -206,7 +217,7 @@
 			</div>
 		{/if}
 		{#each filteredMeetups as slot}
-			<Slot {slot}></Slot>
+			<Slot {slot} {destroySlot}></Slot>
 		{/each}
 	</ul>
 </div>

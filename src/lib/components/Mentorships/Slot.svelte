@@ -9,6 +9,7 @@
 
 	export let mentorships = [];
 	export let slot;
+	export let destroySlot = () => {};
 	let formattedDate;
 	let formattedStartTime;
 	let formattedEndTime;
@@ -96,7 +97,7 @@
 	{#if $user && $user.id === slot.user_id}
 		<div class="lil-nav">
 			<i class="fa fa-pen edit-slot" on:click={() => (editMode = !editMode)}></i>
-			<i class="fa fa-trash remove-slot"></i>
+			<i class="fa fa-trash remove-slot" on:click={() => destroySlot(slot)}></i>
 		</div>
 	{/if}
 	<div class="flex">
