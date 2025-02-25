@@ -352,7 +352,7 @@
 									<div class="session-card p-3 mb-3">
 										<div class="d-flex align-items-center gap-2 mb-2">
 											<img
-												src={$user.avatar_cropped_url}
+												src={mentee.user.avatar_cropped_url}
 												class="mentor-avatar"
 												alt="mentee avatar"
 											/>
