@@ -196,7 +196,7 @@
 					if ($user) {
 						bookMeeting();
 					} else {
-						Swal.fire("Not Signed In, 'Please Sign in to book your spot','error");
+						Swal.fire('Not Signed In', 'Please Sign in to book your spot', 'error');
 					}
 				}}
 			>
