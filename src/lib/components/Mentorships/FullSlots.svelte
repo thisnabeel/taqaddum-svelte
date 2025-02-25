@@ -180,7 +180,7 @@
 					<h4>Try changing the filters above.</h4>
 				{:else}
 					<h1>Uh-oh</h1>
-					<h2>This mentor has no slots available yet, please check back at a later time.</h2>
+					<h2>This mentor has no meetings available yet, please check back at a later time.</h2>
 					<div>
 						<button class="btn btn-warning" on:click={() => (showInterestForm = !showInterestForm)}>
 							{showInterestForm ? 'Hide Interest in Mentorship' : 'Show Interest in Mentorship'}
