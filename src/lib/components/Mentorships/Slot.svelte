@@ -13,7 +13,9 @@
 	let formattedStartTime;
 	let formattedEndTime;
 	let formattedTimezone;
+	let editMode = false;
 
+	$: console.log('mentees', slot);
 	const timeZoneMap = {
 		'America/Los_Angeles': 'PST',
 		'America/Denver': 'MST',
@@ -75,13 +77,89 @@
 		Swal.close();
 		Swal.fire('Done', 'Your spot has been booked', 'success');
 	}
+
+	async function saveChanges() {
+		Swal.fire('Saving your meeting changes', 'Please hold...');
+
+		await API.put(`/slots/${slot.id}`, {
+			title: slot.title,
+			description: slot.description
+		});
+
+		Swal.close();
+		Swal.fire('Done', 'Your changes have been saved', 'success');
+		editMode = false;
+	}
 </script>
 
 <div class="editable-slot">
-	<h5>{slot.skill.title}</h5>
+	{#if $user && $user.id === slot.user_id}
+		<div class="lil-nav">
+			<i class="fa fa-pen edit-slot" on:click={() => (editMode = !editMode)}></i>
+			<i class="fa fa-trash remove-slot"></i>
+		</div>
+	{/if}
+	<div class="flex">
+		<div class="flex-70 flex-grow" style="padding-right: 10px">
+			<h5>{slot.skill.title}</h5>
 
-	<h4>{slot.title}</h4>
-	<p>{slot.description}</p>
+			{#if editMode}
+				<input type="text" class="title-input" bind:value={slot.title} />
+				<textarea name="" id="" class="description-input" bind:value={slot.description}></textarea>
+				<button class="btn btn-outline-primary" on:click={() => saveChanges()}>Save Changes</button>
+			{:else}
+				<h4>{slot.title}</h4>
+				<p>{slot.description}</p>
+			{/if}
+		</div>
+
+		<div class="flex-30 flex-grow">
+			<div class="block">
+				<p style="margin-bottom: -2px">The Host:</p>
+				<div class="d-flex gap-1 align-items-center flex-wrap">
+					<div
+						class="position-relative mentee-avatar-container host"
+						title={`${slot.user.first_name} ${slot.user.last_name}`}
+					>
+						<div>
+							<img
+								src={slot.user.avatar_cropped_url}
+								class="mentor-avatar"
+								alt={`${slot.user.first_name} ${slot.user.last_name}`}
+							/>
+						</div>
+						<div>
+							<b>{slot.user.first_name} {slot.user.last_name}</b>
+						</div>
+					</div>
+				</div>
+			</div>
+			{#if slot.mentees && slot.mentees.length > 0}
+				<p style="margin-bottom: -2px">Attendees:</p>
+				<div class="d-flex gap-1 align-items-center flex-wrap">
+					{#each slot.mentees as mentee}
+						<div
+							class="position-relative mentee-avatar-container"
+							title={`${mentee.first_name} ${mentee.last_name}`}
+						>
+							<img
+								src={mentee.avatar_cropped_url}
+								class="mentor-avatar"
+								alt={`${mentee.first_name} ${mentee.last_name}`}
+							/>
+							<span class="mentee-info-tooltip">
+								{mentee.first_name}
+								{mentee.last_name}
+								<br />
+								{mentee.menteeships.find((m) => m.skill.id === slot.skill.id).profession ||
+									'No Experience listed'}
+							</span>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
 
 	<div style="position:relative; display: inline-block;">
 		<!-- <TimezonePsicker {slot}></TimezonePicker> -->
@@ -125,6 +203,65 @@
 </div>
 
 <style>
+	/* Tooltip styling */
+	.mentee-avatar-container {
+		position: relative;
+	}
+
+	.mentee-info-tooltip {
+		position: absolute;
+		left: 50%;
+		bottom: 100%;
+		transform: translateX(-50%);
+		background-color: rgba(0, 0, 0, 0.8);
+		color: white;
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		font-size: 0.75rem;
+		white-space: nowrap;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.2s,
+			visibility 0.2s;
+		z-index: 100;
+	}
+
+	.mentee-avatar-container:hover .mentee-info-tooltip {
+		opacity: 1;
+		visibility: visible;
+	}
+	.mentor-avatar {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 3px solid white;
+		box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+	}
+
+	.host {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		justify-content: flex-start;
+	}
+
+	.session-card {
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		border-radius: 0.5rem;
+		background-color: #fff;
+	}
+
+	/* Mobile-specific adjustments */
+	@media (max-width: 380px) {
+		.mentor-avatar {
+			width: 40px;
+			height: 40px;
+			border-width: 2px;
+		}
+	}
+
 	.time {
 		font-size: 24px;
 	}
@@ -139,6 +276,24 @@
 		border-radius: 4px;
 		margin-bottom: 10px;
 		pointer-events: none;
+	}
+
+	.title-input {
+		border: 0;
+		font-size: 24px !important;
+		font-weight: 400;
+		background: #f3f3f3;
+		width: 100%;
+
+		border-bottom: 1px dashed #cacaca !important;
+	}
+
+	.description-input {
+		border: 0;
+		font-size: 16px;
+		font-weight: 400;
+		background: #f3f3f3;
+		width: 100%;
 	}
 	.editable-slot {
 		background: #fff;
@@ -155,6 +310,21 @@
 		background: #f3f3f3;
 		width: 100%;
 		padding: 5px;
+	}
+
+	.lil-nav {
+		position: absolute;
+		right: -50px;
+		width: 34px;
+	}
+	.lil-nav > * {
+		display: block;
+		margin-bottom: 10px;
+		color: #ccc;
+	}
+
+	.lil-nav > *:hover {
+		color: #000;
 	}
 
 	h5 {

@@ -379,86 +379,43 @@
 					</div>
 					<div class="card-body">
 						{#if dashboard.mentors.sessions && dashboard.mentors.sessions.length > 0}
-							<div class="mobile-cards">
-								{#each dashboard.mentors.sessions as session}
-									<div class="session-card p-3 mb-3">
-										<div class="d-flex justify-content-between align-items-start mb-3">
-											<div>
-												<div class="fw-bold">{session.title}</div>
-												<div class="text-muted small">{session.skill.title}</div>
-											</div>
-											<a class="btn btn-info btn-sm" on:click={() => {}}>Book Meeting</a>
-										</div>
+							<!-- Group sessions by skill.title -->
+							{@const groupedSessions = dashboard.mentors.sessions.reduce((acc, session) => {
+								const skillTitle = session.skill.title;
+								if (!acc[skillTitle]) {
+									acc[skillTitle] = [];
+								}
+								acc[skillTitle].push(session);
+								return acc;
+							}, {})}
 
-										<div class="d-flex align-items-center gap-2 mb-2">
-											<img
-												src={session.user.avatar_cropped_url}
-												class="mentor-avatar"
-												alt="mentor avatar"
-											/>
-											<div>
-												{session.user.first_name}
-											</div>
-										</div>
+							<!-- Mobile view with grouped sessions -->
+							<div class="mobile-cards d-block d-lg-none">
+								{#each Object.entries(groupedSessions) as [skillTitle, sessions]}
+									<div class="skill-group mb-4">
+										<h4 class="h6 border-bottom pb-2 mb-3">{skillTitle}</h4>
 
-										<div class="text-muted">
-											<div>
-												{new Date(session.start_time).toLocaleDateString('en-US', {
-													weekday: 'short',
-													month: 'short',
-													day: 'numeric',
-													year: 'numeric'
-												})}
-											</div>
-											<div class="small">
-												{new Date(session.start_time).toLocaleTimeString('en-US', {
-													hour: '2-digit',
-													minute: '2-digit',
-													timeZone: session.timezone
-												})} -
-												{new Date(session.end_time).toLocaleTimeString('en-US', {
-													hour: '2-digit',
-													minute: '2-digit',
-													timeZone: session.timezone
-												})}
-												({session.timezone})
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-
-							<!-- Desktop table, hidden on mobile -->
-							<div class="table-responsive d-none d-lg-block">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th>Session</th>
-											<th>Mentor</th>
-											<th>Date & Time</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										{#each dashboard.mentors.sessions as session}
-											<tr>
-												<td>
-													<div class="fw-bold">{session.title}</div>
-													<div class="text-muted small">{session.skill.title}</div>
-												</td>
-												<td>
-													<div class="d-flex align-items-center gap-2">
-														<img
-															src={session.user.avatar_cropped_url}
-															class="mentor-avatar"
-															alt="mentor avatar"
-														/>
-														<div>
-															{session.user.first_name}
-														</div>
+										{#each sessions as session}
+											<div class="session-card p-3 mb-3 border rounded">
+												<div class="d-flex justify-content-between align-items-start mb-3">
+													<div>
+														<div class="fw-bold">{session.title}</div>
 													</div>
-												</td>
-												<td>
+													<a class="btn btn-info btn-sm" on:click={() => {}}>Book Meeting</a>
+												</div>
+
+												<div class="d-flex align-items-center gap-2 mb-2">
+													<img
+														src={session.user.avatar_cropped_url}
+														class="mentor-avatar"
+														alt="mentor avatar"
+													/>
+													<div>
+														{session.user.first_name}
+													</div>
+												</div>
+
+												<div class="text-muted">
 													<div>
 														{new Date(session.start_time).toLocaleDateString('en-US', {
 															weekday: 'short',
@@ -467,7 +424,7 @@
 															year: 'numeric'
 														})}
 													</div>
-													<div class="text-muted small">
+													<div class="small">
 														{new Date(session.start_time).toLocaleTimeString('en-US', {
 															hour: '2-digit',
 															minute: '2-digit',
@@ -480,19 +437,83 @@
 														})}
 														({session.timezone})
 													</div>
-												</td>
-												<td>
-													<a
-														class="btn btn-info"
-														on:click={() => {
-															startChatRoom(session);
-														}}>Enter Meeting</a
-													>
-												</td>
-											</tr>
+												</div>
+											</div>
 										{/each}
-									</tbody>
-								</table>
+									</div>
+								{/each}
+							</div>
+
+							<!-- Desktop view with grouped sessions -->
+							<div class="d-none d-lg-block">
+								{#each Object.entries(groupedSessions) as [skillTitle, sessions]}
+									<div class="skill-group mb-4 border-bottom">
+										<div class="table-responsive">
+											<table class="table table-hover">
+												<thead>
+													<tr>
+														<th><Comic>{skillTitle}</Comic></th>
+														<th>Mentor</th>
+														<th>Date & Time</th>
+														<th>Status</th>
+													</tr>
+												</thead>
+												<tbody>
+													{#each sessions as session}
+														<tr>
+															<td>
+																<div class="fw-bold">{session.title}</div>
+															</td>
+															<td>
+																<div class="d-flex align-items-center gap-2">
+																	<img
+																		src={session.user.avatar_cropped_url}
+																		class="mentor-avatar"
+																		alt="mentor avatar"
+																	/>
+																	<div>
+																		{session.user.first_name}
+																	</div>
+																</div>
+															</td>
+															<td>
+																<div>
+																	{new Date(session.start_time).toLocaleDateString('en-US', {
+																		weekday: 'short',
+																		month: 'short',
+																		day: 'numeric',
+																		year: 'numeric'
+																	})}
+																</div>
+																<div class="text-muted small">
+																	{new Date(session.start_time).toLocaleTimeString('en-US', {
+																		hour: '2-digit',
+																		minute: '2-digit',
+																		timeZone: session.timezone
+																	})} -
+																	{new Date(session.end_time).toLocaleTimeString('en-US', {
+																		hour: '2-digit',
+																		minute: '2-digit',
+																		timeZone: session.timezone
+																	})}
+																	({session.timezone})
+																</div>
+															</td>
+															<td>
+																<a
+																	class="btn btn-info"
+																	on:click={() => {
+																		startChatRoom(session);
+																	}}>Enter Meeting</a
+																>
+															</td>
+														</tr>
+													{/each}
+												</tbody>
+											</table>
+										</div>
+									</div>
+								{/each}
 							</div>
 						{:else}
 							<p class="text-muted mb-0">No sessions scheduled yet.</p>
