@@ -76,6 +76,15 @@
 		}
 		console.log(booking);
 	}
+
+	$: groupedSessions = dashboard.mentors.sessions.reduce((acc, session) => {
+		const skillTitle = session.skill.title;
+		if (!acc[skillTitle]) {
+			acc[skillTitle] = [];
+		}
+		acc[skillTitle].push(session);
+		return acc;
+	}, {});
 </script>
 
 <div class="container py-4">
@@ -427,14 +436,6 @@
 					<div class="card-body">
 						{#if dashboard.mentors.sessions && dashboard.mentors.sessions.length > 0}
 							<!-- Group sessions by skill.title -->
-							{@const groupedSessions = dashboard.mentors.sessions.reduce((acc, session) => {
-								const skillTitle = session.skill.title;
-								if (!acc[skillTitle]) {
-									acc[skillTitle] = [];
-								}
-								acc[skillTitle].push(session);
-								return acc;
-							}, {})}
 
 							<!-- Mobile view with grouped sessions -->
 							<div class="mobile-cards d-block d-lg-none">
