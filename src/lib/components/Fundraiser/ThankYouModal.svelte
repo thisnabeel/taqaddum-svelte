@@ -126,7 +126,7 @@
 
 	@media (max-width: 768px) {
 		.message {
-			max-height: 45vh;
+			max-height: 35vh;
 			overflow-y: scroll;
 		}
 	}
