@@ -7,7 +7,7 @@ body {
 
 .sticky {
 	position: fixed !important;
-	z-index: 9999;
+	z-index: 997;
 }
 .sticky-under {
 	width: 100%;

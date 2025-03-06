@@ -39,32 +39,9 @@
 			<OutClick on:outclick={handleOutsideClick}>
 				<div class="contents">
 					<div class="modal-header">
-						<h2>Jazakum Allahu Khayran for Your Support!</h2>
+						<h2>Jazak Allahu Khayr for Your Support!</h2>
 					</div>
 					<div class="modal-body">
-						<p>
-							Your generosity is helping build a brighter future for Muslim professionals and
-							students worldwide. Through <b>Taqaddum</b>, we are creating meaningful mentorship
-							opportunities that empower young professionals with career guidance, real-world
-							experiences, and Islamic values.
-						</p>
-						<p>
-							Every dollar you contribute fuels our mission—connecting mentors and mentees in a
-							safe, structured, and impactful way. Your support enables us to provide vetted
-							mentors, intelligent career roadmaps, and mentorship tools that ensure every
-							interaction is valuable.
-						</p>
-						<p>
-							With your help, we are fostering <b>real human connections</b>, integrating
-							<b>Islamic principles in professional growth</b>, and ensuring that every student and
-							graduate has access to <b>intelligent, structured career development</b>.
-						</p>
-						<p>
-							May Allah reward you abundantly for your kindness and generosity. Your impact goes
-							beyond financial support— you are <b
-								>investing in the next generation of Muslim leaders</b
-							>.
-						</p>
 						{#if details && details.amount_received}
 							<p class="receipt">
 								<strong>Amount Paid:</strong>
@@ -73,6 +50,27 @@
 									: 'Loading...'}
 							</p>
 						{/if}
+						<section class="message">
+							<p>
+								Your generosity shapes a brighter future for Muslim professionals and students.
+								Through <b>Taqaddum</b>, we create mentorship opportunities that provide career
+								guidance, real-world experiences, and Islamic values.
+							</p>
+							<p>
+								Every dollar fuels our mission—connecting mentors and mentees in a safe, structured,
+								and impactful way. Your support enables vetted mentors, career roadmaps, and
+								mentorship tools for valuable interactions.
+							</p>
+							<p>
+								With your help, we foster <b>real connections</b>, integrate
+								<b>Islamic principles in professional growth</b>, and ensure
+								<b>structured career development</b> for students and graduates.
+							</p>
+							<p>
+								May Allah reward you abundantly—your support is more than financial; it’s an
+								<b>investment in the next generation of Muslim leaders</b>.
+							</p>
+						</section>
 					</div>
 					<div class="modal-footer">
 						<button class="close-button btn btn-outline-info" on:click={() => modals.close()}
@@ -124,5 +122,11 @@
 		flex-direction: column;
 		justify-content: space-between;
 		pointer-events: auto;
+	}
+
+	@media (max-width: 768px) {
+		.message {
+			overflow-y: scroll;
+		}
 	}
 </style>
