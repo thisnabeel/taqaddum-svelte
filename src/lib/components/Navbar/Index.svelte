@@ -41,6 +41,10 @@
 				{#if mode === 'fundraising'}
 					<button class="login" on:click={scrollToLearnMore}>Learn More</button>
 					<a class="signup clean" on:click={scrollToDonate}>Donate</a>
+					<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
+						>Sponsor</a
+					>
+
 					<!-- <a / -->
 				{:else}
 					<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
@@ -124,8 +128,9 @@
 				<button class="login" on:click={scrollToLearnMore}>Learn More</button>
 
 				<a class="signup clean" on:click={scrollToDonate}>Donate</a>
-				<!-- <a class="btn btn-outline-primary clean" on:click={() => visit('/users/sign_up')}>Sponsor</a
-				> -->
+				<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
+					>Sponsor</a
+				>
 			{:else}
 				<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>
 				<a class="signup clean" on:click={() => visit('/users/sign_up')}>Get Started</a>

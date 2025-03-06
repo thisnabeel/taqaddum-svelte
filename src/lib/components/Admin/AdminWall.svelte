@@ -16,6 +16,9 @@
 			<li>
 				<a href="/admin/mentees">Mentees</a>
 			</li>
+			<li>
+				<a href="/sponsors/applications">Sponsorships</a>
+			</li>
 		</ul>
 		<slot />
 	{/if}
