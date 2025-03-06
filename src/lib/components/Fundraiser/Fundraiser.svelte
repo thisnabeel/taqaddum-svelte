@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import { modals } from 'svelte-modals';
 	import ThankYouModal from './ThankYouModal.svelte';
+	import stripe_key from '$lib/api/stripe_key';
 
 	let stripe;
 	let donationAmount = 100;
@@ -13,10 +14,9 @@
 	let donation_category = 'Donation';
 	let loadingRaisedMount = false;
 
+	// pk_live_51QxIVvGWlqH4iAnzh0UBtEKsROAsYvueTsOEyvK23yxCaMkBC9MRxeFDctqNIDa9ZOGa5p4ACukxdNig3IZrq1Bo00kcx3YgUo
 	onMount(async () => {
-		stripe = await loadStripe(
-			'pk_test_51QxIVvGWlqH4iAnzfexNnYP5XUJS4YZjggC3UmLRkJtfiAU3u88LsCPBkrvPuMmloEvHrVHkPd6ivFSnHOojcTC200PO6zT0Zt'
-		);
+		stripe = await loadStripe(stripe_key);
 		moneyRaised();
 	});
 
