@@ -6,6 +6,8 @@
 	import { user } from '$lib/stores/user';
 	import MentorDashboard from '$lib/components/Mentor/Dashboard/Dashboard.svelte';
 	import MenteeDashboard from '$lib/components/Mentee/Dashboard/Dashboard.svelte';
+	import Fundraiser from '$lib/components/Fundraiser/Fundraiser.svelte';
+	import Features from '$lib/components/Hero/Features.svelte';
 
 	let mentors = [];
 
@@ -23,8 +25,12 @@
 {:else if $user && $user.type === 'Mentee'}
 	<MenteeDashboard></MenteeDashboard>
 {:else}
+	<!-- Landing Page -->
+	<!-- in desktop make heor and fundraiser side by side -->
+
 	<Hero />
-	<section class="mentors">
+
+	<section class="mentors" id="scroll-learn-more">
 		<h1 class="text-center">Vetted Mentors:</h1>
 		<div class="list">
 			{#each mentors as mentorship}
@@ -32,24 +38,26 @@
 			{/each}
 		</div>
 	</section>
+
+	<!-- Website Explanation and Features -->
+	<Features></Features>
 {/if}
 
 <style>
 	.mentors .list {
 		display: flex;
-
 		gap: 20px;
 		padding: 20px;
-		flex-wrap: nowrap; /* Prevent wrapping */
-		overflow-x: auto; /* Enable horizontal scrolling */
-		scroll-snap-type: x mandatory; /* Smooth scrolling */
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
 		justify-content: center;
 	}
 
 	.mentors .list > * {
-		flex: 0 0 300px; /* Fixed width for each card */
+		flex: 0 0 300px;
 		max-width: 300px;
-		height: 400px; /* Equal height */
+		height: 400px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -59,14 +67,27 @@
 
 	@media (max-width: 768px) {
 		.mentors .list {
-			overflow-x: auto; /* Ensure horizontal scroll */
-			white-space: nowrap; /* Prevent stacking */
-			padding-bottom: 10px; /* Prevent scrollbar overlap */
-			justify-content: flex-start; /* Align from left */
+			overflow-x: auto;
+			white-space: nowrap;
+			padding-bottom: 10px;
+			justify-content: flex-start;
 		}
 
 		.mentors .list::-webkit-scrollbar {
-			display: none; /* Hide scrollbar on Webkit browsers */
+			display: none;
 		}
+	}
+
+	.landing-layout {
+		width: 100%;
+	}
+
+	/* Stack them vertically on smaller screens */
+	@media (max-width: 1024px) {
+		/* .landing-layout {
+			flex-direction: column;
+			gap: 10px;
+			padding: 20px;
+		} */
 	}
 </style>

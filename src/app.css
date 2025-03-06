@@ -5,6 +5,15 @@ body {
 	display: flex;
 }
 
+.sticky {
+	position: fixed !important;
+	z-index: 9999;
+}
+.sticky-under {
+	width: 100%;
+	padding-top: 6em !important;
+}
+
 .flex-grow {
 	flex: 1 1 var(--flex-size, 100%);
 }

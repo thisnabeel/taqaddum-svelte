@@ -1,5 +1,4 @@
 <script>
-	import Fundraiser from '../Fundraiser/Fundraiser.svelte';
 	import ScrollingList from '../Skills/ScrollingList.svelte';
 	import Search from '../Skills/Search.svelte';
 
@@ -8,35 +7,28 @@
 </script>
 
 <section class="hero">
-	<div class="fundraiser" id="fundraiser">
-		<div class="left">
-			<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
-				<img style="width:100%" src="/cta2.png" alt="" />
-			</div>
-			<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
-			<p>{subtext}</p>
-		</div>
-		<div class="right">
-			<Fundraiser />
-		</div>
+	<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
+		<img style="width:100%" src="/cta2.png" alt="" />
+	</div>
+
+	<h1 class="heading">Islamic Values, <span>Professional Success.</span></h1>
+	<p>{subtext}</p>
+
+	<div class="search-bar">
+		<!-- <Search placeholder={'Search by Expertise...'}></Search> -->
+		<!-- <select>
+			<option>Expertise</option>
+		</select>
+		<select>
+			<option>Country</option>
+		</select> -->
+		<button>Get Started Today</button>
 	</div>
 
 	<ScrollingList></ScrollingList>
 </section>
 
 <style>
-	.fundraiser {
-		display: flex;
-		align-items: center;
-	}
-
-	.fundraiser .left {
-		flex: 1 1 50%;
-	}
-
-	.fundraiser .right {
-		flex: 1 1 50%;
-	}
 	.hero {
 		text-align: center;
 		padding: 50px 20px;
@@ -66,10 +58,6 @@
 	}
 
 	@media (max-width: 768px) {
-		.fundraiser {
-			display: block;
-			align-items: center;
-		}
 		.heading span {
 			display: block;
 		}
