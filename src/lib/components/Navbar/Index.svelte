@@ -42,7 +42,7 @@
 					<button class="login" on:click={scrollToLearnMore}>Learn More</button>
 					<a class="signup clean" on:click={scrollToDonate}>Donate</a>
 					<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
-						>Sponsor</a
+						>Partner</a
 					>
 
 					<!-- <a / -->
@@ -129,7 +129,7 @@
 
 				<a class="signup clean" on:click={scrollToDonate}>Donate</a>
 				<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
-					>Sponsor</a
+					>Partner</a
 				>
 			{:else}
 				<button class="login" on:click={() => visit('/users/sign_in')}>Log In</button>

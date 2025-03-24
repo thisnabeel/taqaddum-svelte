@@ -1,6 +1,7 @@
 <script>
 	import API from '$lib/api/api';
 	import AdminWall from '$lib/components/Admin/AdminWall.svelte';
+	import MentorRow from '$lib/components/Admin/Mentors/Row.svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
@@ -28,6 +29,20 @@
 			fetchMentors(); // Refresh list after update
 		} catch (error) {
 			console.error('Error updating status:', error);
+		}
+	}
+
+	async function removeMentorship(mentorship) {
+		try {
+			console.log('Deleting mentorship:', mentorship.id);
+			await API.delete('/mentorships/' + mentorship.id);
+			mentors.set({
+				pending: $mentors.pending.filter((m) => m.id !== mentorship.id),
+				approved: $mentors.approved.filter((m) => m.id !== mentorship.id)
+			});
+			return Promise.resolve('Deleted');
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 
@@ -70,38 +85,13 @@
 				<tbody>
 					{#if activeTab === 'pending'}
 						{#each $mentors.pending || [] as mentorship}
-							<tr>
-								<td>
-									<a href="/mentors/{mentorship.user.id}"
-										>{mentorship.user.first_name} {mentorship.user.last_name}</a
-									>
-								</td>
-								<td><b>{mentorship.profession}</b> <br />@ {mentorship.company}</td>
-								<td>{mentorship.skill.title}</td>
-								<td>
-									<button class="btn btn-primary btn-sm" on:click={() => toggleStatus(mentorship)}
-										>Approve</button
-									>
-								</td>
-							</tr>
+							<MentorRow {mentorship} {toggleStatus} {removeMentorship} category={'approve'}
+							></MentorRow>
 						{/each}
 					{:else}
 						{#each $mentors.approved || [] as mentorship}
-							<tr>
-								<td>
-									<a href="/mentors/{mentorship.user.id}"
-										>{mentorship.user.first_name} {mentorship.user.last_name}</a
-									>
-								</td>
-								<td><b>{mentorship.profession}</b> <br />@ {mentorship.company}</td>
-								<td>{mentorship.skill.title}</td>
-								<td>
-									<button
-										class="btn btn-outline-danger btn-sm"
-										on:click={() => toggleStatus(mentorship)}>Revoke</button
-									>
-								</td>
-							</tr>
+							<MentorRow {mentorship} {toggleStatus} {removeMentorship} category={'deny'}
+							></MentorRow>
 						{/each}
 					{/if}
 				</tbody>

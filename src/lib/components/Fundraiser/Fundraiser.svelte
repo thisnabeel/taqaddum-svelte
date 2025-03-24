@@ -48,7 +48,7 @@
 			amount: 3000,
 			success_url: $page.url,
 			cancel_url: $page.url,
-			name: 'Sponsorship'
+			name: 'Partnership'
 		});
 
 		stripe.redirectToCheckout({ sessionId: response.sessionId });
