@@ -22,7 +22,7 @@
 	</div> -->
 	<div>
 		<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
-			<img style="width:100%" src="/cta2.png" alt="" />
+			<img style="width:100%" src="/booking.gif" alt="" />
 		</div>
 		<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
 		<p>{subtext}</p>

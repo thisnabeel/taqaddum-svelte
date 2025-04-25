@@ -14,7 +14,7 @@
 		menuOpen = false;
 	}
 
-	let mode = 'fundraising';
+	let mode = 'fundraising-not';
 	let donations = false;
 
 	function scrollToLearnMore() {

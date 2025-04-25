@@ -9,7 +9,7 @@
 	<h2>Key Features</h2>
 	<ul>
 		<li>
-			<!-- <img src="default-avatar.png" alt="Vetted Mentors & Mentees" /> -->
+			<!-- <img src="/booking.gif" alt="Vetted Mentors & Mentees" /> -->
 			<div>
 				<strong>Vetted Mentors & Mentees:</strong> Our professional faculty carefully vets both mentors
 				and mentees to ensure a high level of commitment and expertise. This process ensures that no
