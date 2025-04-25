@@ -3,6 +3,8 @@
 	import { user, userView } from '$lib/stores/user';
 	import Comic from '../Buttons/comic.svelte';
 	import IfAdmin from '../Admin/IfAdmin.svelte';
+	import { page } from '$app/stores';
+
 	export let logo = 'Taqaddum';
 
 	let menuOpen = false;
@@ -13,6 +15,7 @@
 	}
 
 	let mode = 'fundraising';
+	let donations = false;
 
 	function scrollToLearnMore() {
 		document.querySelector('#scroll-learn-more')?.scrollIntoView({ behavior: 'smooth' });
@@ -39,8 +42,12 @@
 		{#if !$user}
 			<div class="mobile-user">
 				{#if mode === 'fundraising'}
-					<button class="login" on:click={scrollToLearnMore}>Learn More</button>
-					<a class="signup clean" on:click={scrollToDonate}>Donate</a>
+					{#if !$page.url.pathname.includes('/faq')}
+						<button class="login" on:click={scrollToLearnMore}>Learn More</button>
+					{/if}
+					{#if donations}
+						<a class="signup clean" on:click={scrollToDonate}>Donate</a>
+					{/if}
 					<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
 						>Partner</a
 					>
@@ -125,9 +132,13 @@
 	<div class="auth-buttons">
 		{#if !$user}
 			{#if mode === 'fundraising'}
-				<button class="login" on:click={scrollToLearnMore}>Learn More</button>
+				{#if !$page.url.pathname.includes('/faq')}
+					<button class="login" on:click={scrollToLearnMore}>Learn More</button>
+				{/if}
 
-				<a class="signup clean" on:click={scrollToDonate}>Donate</a>
+				{#if donations}
+					<a class="signup clean" on:click={scrollToDonate}>Donate</a>
+				{/if}
 				<a class="btn btn-outline-primary clean" on:click={() => visit('/sponsors/apply')}
 					>Partner</a
 				>
