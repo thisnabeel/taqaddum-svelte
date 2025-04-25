@@ -85,6 +85,11 @@
 						><i class="fa fa-lightbulb-o"></i> My Meetings</a
 					>
 				</li>
+				<li>
+					<a href="/users/roadmaps" on:click={() => (menuOpen = false)}
+						><i class="fa fa-map"></i> My Roadmaps</a
+					>
+				</li>
 			{:else if $user.type === 'Mentee'}
 				<li>
 					<a href="/" on:click={() => (menuOpen = false)}
