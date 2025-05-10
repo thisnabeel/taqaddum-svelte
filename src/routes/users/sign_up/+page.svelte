@@ -21,6 +21,7 @@
 	let password_confirmation = '';
 	let profession = '';
 	let company = '';
+	let linkedin_url = ''; // Add this variable
 	let errorMessage = '';
 	let successMessage = '';
 
@@ -46,6 +47,11 @@
 		modals.close();
 	}
 
+	function isValidLinkedInUrl(url) {
+		const linkedInRegex = /^https:\/\/(www\.)?linkedin\.com\/.*$/;
+		return linkedInRegex.test(url);
+	}
+
 	async function register() {
 		errorMessage = '';
 		successMessage = '';
@@ -55,8 +61,20 @@
 			return;
 		}
 
-		if (!first_name || !last_name || !email || !password || !password_confirmation) {
-			raiseError('All fields are required.');
+		if (
+			!first_name ||
+			!last_name ||
+			!email ||
+			!password ||
+			!password_confirmation ||
+			!linkedin_url
+		) {
+			raiseError('All fields are required, including LinkedIn URL.');
+			return;
+		}
+
+		if (!isValidLinkedInUrl(linkedin_url)) {
+			raiseError('Please provide a valid LinkedIn profile URL.');
 			return;
 		}
 
@@ -200,6 +218,12 @@
 			/>
 			<input type="text" bind:value={last_name} class="form-control mb-3" placeholder="Last Name" />
 			<input type="email" bind:value={email} class="form-control mb-3" placeholder="Email" />
+			<input
+				type="text"
+				bind:value={linkedin_url}
+				class="form-control mb-3"
+				placeholder="LinkedIn URL"
+			/>
 
 			<div class="mb-3">
 				<label class="form-label"

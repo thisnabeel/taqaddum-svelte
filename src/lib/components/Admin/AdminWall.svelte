@@ -19,6 +19,9 @@
 			<li>
 				<a href="/sponsors/applications">Sponsorships</a>
 			</li>
+			<li>
+				<a href="/users/leads">Leads</a>
+			</li>
 		</ul>
 		<slot />
 	{/if}

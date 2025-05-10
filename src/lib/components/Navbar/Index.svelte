@@ -98,6 +98,11 @@
 				</li>
 			{/if}
 
+			<li>
+				<a href="/users/calendar" on:click={() => (menuOpen = false)}
+					><i class="fa fa-calendar"></i> Availability</a
+				>
+			</li>
 			<!-- Show user's name & sign out inside mobile dropdown -->
 
 			<li class="mobile-user">

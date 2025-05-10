@@ -5,6 +5,7 @@
 	import { modals } from 'svelte-modals';
 
 	export let signingUp = false;
+	export let asUser = null;
 
 	let avatar_cropped_url =
 		'https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133351928-stock-illustration-default-placeholder-man-and-woman.jpg';
@@ -13,7 +14,7 @@
 <div class="avatar" style="position:relative; width:max-content">
 	<img
 		style="width: 150px"
-		src={($user && $user.avatar_cropped_url) || $avatar_cropped_blob_url || avatar_cropped_url}
+		src={asUser?.avatar_cropped_url || $avatar_cropped_blob_url || avatar_cropped_url}
 		alt=""
 		class="avatar"
 	/>

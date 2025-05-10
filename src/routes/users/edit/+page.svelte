@@ -140,7 +140,7 @@
 		{/if}
 
 		<!-- Avatar Upload Component -->
-		<AvatarPicker />
+		<AvatarPicker asUser={$user} />
 
 		<div class="mb-3">
 			<label class="form-label">First Name</label>
