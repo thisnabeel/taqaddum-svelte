@@ -146,7 +146,7 @@
 		try {
 			const currentUser = get(user);
 			const token = lead.preapproval_token;
-			const emailBody = generateInvitationEmail(lead, token);
+			const emailBody = generateInvitationEmail(lead, token, $user);
 
 			const response = await API.post('/users/send_invitation', {
 				inviter_id: currentUser.id,

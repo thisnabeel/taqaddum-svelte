@@ -12,6 +12,8 @@
 	{/each}
 </ul>
 <p>All you have to do is click the link below to complete your registration:</p>
-<a href={`https://taqaddum.com/preapproval/${token}`} target="_blank"> Complete Registration </a>
+<a href={`https://taqaddum.com/users/preapproval/${token}`} target="_blank">
+	Complete Registration
+</a>
 <hr />
 <p>JazakAllah Khayr for your time,<br />Assalamualikum</p>
