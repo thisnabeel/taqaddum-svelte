@@ -8,7 +8,7 @@ export function generateInvitationEmail(lead, token) {
 				.join('')}
 		</ul>
 		<p>All you have to do is click the link below to complete your registration:</p>
-		<a href="https://www.taqaddum.org/preapproval/${token}" target="_blank">
+		<a href="https://www.taqaddum.org/users/preapproval/${token}" target="_blank">
 			Complete Registration
 		</a>
 		<hr />
