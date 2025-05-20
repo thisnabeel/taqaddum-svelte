@@ -5,6 +5,10 @@
 	import { modals } from 'svelte-modals';
 	import SkillsModal from '$lib/components/Skills/SkillsModal.svelte';
 	import Comic from '$lib/components/Buttons/comic.svelte';
+	import { get } from 'svelte/store';
+	import { user } from '$lib/stores/user'; // Assuming a user store exists to get the current user
+	import InvitationEmail from '$lib/components/InvitationEmail.svelte';
+	import { generateInvitationEmail } from '$lib/components/utils/emailUtils';
 
 	let leads = [];
 	let first_name = '';
@@ -19,6 +23,14 @@
 	let mentorSkills = [];
 	let menteeSkills = [];
 	let formStep = 1; // Track the current step of the form
+
+	function formatLinkedInUrl(url) {
+		if (!url) return '';
+		// If it's already a full LinkedIn URL, return as is
+		if (url.includes('linkedin.com')) return url;
+		// Otherwise, assume it's a profile ID and format it
+		return `https://www.linkedin.com/in/${url.replace(/^\/+|\/+$/g, '')}`;
+	}
 
 	onMount(async () => {
 		await fetchLeads();
@@ -128,6 +140,23 @@
 
 	function goBackToStep1() {
 		formStep = 1; // Go back to the basic information step
+	}
+
+	async function sendInvitation(lead) {
+		try {
+			const currentUser = get(user);
+			const token = lead.preapproval_token;
+			const emailBody = generateInvitationEmail(lead, token);
+
+			const response = await API.post('/users/send_invitation', {
+				inviter_id: currentUser.id,
+				invitee_id: lead.id,
+				body: emailBody
+			});
+			Swal.fire('Success', response.message, 'success');
+		} catch (error) {
+			Swal.fire('Error', error.message || 'Failed to send invitation.', 'error');
+		}
 	}
 </script>
 
@@ -240,7 +269,45 @@
 		{/if}
 	</div>
 
-	<h3>Existing Leads</h3>
+	<h3>Active Leads</h3>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Email</th>
+				<th>Invite Profile</th>
+				<th>LinkedIn</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each leads.filter((lead) => !lead.converted_at) as lead}
+				<tr>
+					<td>{lead.first_name}</td>
+					<td>{lead.last_name}</td>
+					<td>{lead.email}</td>
+					<td><a href={'/users/leads/' + lead.preapproval_token} target="_blank">View Invite</a></td
+					>
+					<td>
+						<a href={formatLinkedInUrl(lead.linkedin_url)} target="_blank" rel="noopener noreferrer"
+							>{lead.linkedin_url}</a
+						>
+					</td>
+					<td>
+						<button class="btn btn-danger btn-sm" on:click={() => deleteLead(lead.id)}
+							>Delete</button
+						>
+						<button class="btn btn-primary btn-sm" on:click={() => sendInvitation(lead)}
+							>Invite</button
+						>
+					</td>
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+
+	<h3 class="mt-5">Closed Leads</h3>
 	<table class="table">
 		<thead>
 			<tr>
@@ -248,18 +315,24 @@
 				<th>Last Name</th>
 				<th>Email</th>
 				<th>LinkedIn</th>
+				<th>Converted At</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each leads as lead}
+			{#each leads.filter((lead) => lead.converted_at) as lead}
 				<tr>
 					<td>{lead.first_name}</td>
 					<td>{lead.last_name}</td>
 					<td>{lead.email}</td>
 					<td
-						><a href={'/users/leads/' + lead.preapproval_token} target="_blank">View Profile</a></td
+						><a
+							href={formatLinkedInUrl(lead.linkedin_url)}
+							target="_blank"
+							rel="noopener noreferrer">{lead.linkedin_url}</a
+						></td
 					>
+					<td>{new Date(lead.converted_at).toLocaleDateString()}</td>
 					<td>
 						<button class="btn btn-danger btn-sm" on:click={() => deleteLead(lead.id)}
 							>Delete</button
@@ -303,5 +376,9 @@
 
 	.skill-header :global(button) {
 		width: 100%;
+	}
+
+	.mt-5 {
+		margin-top: 3rem;
 	}
 </style>

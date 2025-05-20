@@ -4,8 +4,10 @@
 	import { page } from '$app/stores';
 	import API from '$lib/api/api';
 	import AvatarPicker from '$lib/components/Avatar/AvatarPicker.svelte';
+	import Comic from '$lib/components/Buttons/comic.svelte';
 
 	import SkillSelectorModal from '$lib/components/Skills/SkillsModal.svelte';
+	import FinishRegistration from '$lib/components/PreApprovals/FinishRegistration.svelte';
 
 	let activeTab = 'email';
 	let token = $page.params.token;
@@ -61,6 +63,8 @@
 	}
 
 	$: console.log({ $user });
+
+	function updateUser() {}
 </script>
 
 {#if $user?.roles?.includes('admin')}
@@ -96,40 +100,7 @@
 			<hr />
 			<p>JazakAllah Khayr for your time,<br />Assalamualikum</p>
 		{:else if activeTab === 'preapproval'}
-			<h2>Pre-Approval Page Preview</h2>
-			<p>Welcome, {lead?.first_name || 'User'}!</p>
-			<p>
-				You have been pre-approved to join Taqaddum as a mentor. Please complete your profile to get
-				started.
-			</p>
-
-			<div>
-				<label for="avatar">Avatar:</label>
-				<AvatarPicker signingUp={true} />
-			</div>
-
-			<div>
-				<label for="password">Password:</label>
-				<input type="password" id="password" bind:value={password} />
-			</div>
-
-			<div>
-				<label for="skills">Skills:</label>
-				<ul>
-					{#each skills as skill}
-						<li>
-							{skill} <button on:click={() => removeSkill(skill)}>Remove</button>
-						</li>
-					{/each}
-				</ul>
-				<button on:click={openSkillModal}>Select Skills</button>
-			</div>
-
-			{#if errorMessage}
-				<p style="color: red;">{errorMessage}</p>
-			{/if}
-
-			<button class="btn btn-primary" on:click={handleSubmit}>Complete Profile</button>
+			<FinishRegistration {lead} {token} />
 		{/if}
 	</div>
 {:else}
@@ -178,5 +149,81 @@
 	}
 	ul li button:hover {
 		background: #c82333;
+	}
+
+	.container {
+		background: #f8f9fa;
+	}
+
+	.card {
+		border-radius: 10px;
+	}
+
+	.form-control:focus {
+		border-color: #0d6efd;
+		box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+	}
+
+	.btn-primary {
+		background-color: #007bff;
+		border: none;
+	}
+
+	.btn-primary:hover {
+		background-color: #0056b3;
+	}
+
+	.gray {
+		background-color: #e4e4e4;
+	}
+
+	.skill-box {
+		background: #f1f1f1;
+		padding: 10px;
+		border-radius: 8px;
+		margin-bottom: 10px;
+	}
+	.skill-header {
+		cursor: pointer;
+		background: white;
+		padding: 10px;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+		text-align: center;
+		position: relative;
+	}
+
+	.approval-badge {
+		display: none;
+		position: absolute;
+		top: -13px;
+		right: -30px;
+		font-size: 10px;
+		width: 84px;
+		z-index: 99;
+	}
+
+	.approval-badge.waiting {
+		font-size: 34px;
+		color: #787878;
+		top: -9px;
+		right: -34px;
+		z-index: 99;
+	}
+
+	.approval-badge.approved {
+		font-size: 34px;
+		color: green;
+		top: -9px;
+		right: -34px;
+		z-index: 99;
+	}
+
+	.skill-header :global(button) {
+		width: 100%;
+	}
+
+	.pending_approval :global(button) {
+		--yellow-400: #ccc;
 	}
 </style>
