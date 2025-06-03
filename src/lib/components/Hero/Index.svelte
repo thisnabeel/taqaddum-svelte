@@ -2,13 +2,14 @@
 	import Fundraiser from '../Fundraiser/Fundraiser.svelte';
 	import ScrollingList from '../Skills/ScrollingList.svelte';
 	import Search from '../Skills/Search.svelte';
+	import Steps from '../Steps/Steps.svelte';
 
 	export let subtext =
 		"Get the kind of personalized advice you'd never find reading blog posts or watching courses.";
 </script>
 
 <section class="hero">
-	<!-- <div class="fundraiser" id="fundraiser">
+	<div class="fundraiser" id="fundraiser">
 		<div class="left">
 			<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
 				<img style="width:100%" src="/cta2.png" alt="" />
@@ -16,17 +17,18 @@
 			<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
 			<p>{subtext}</p>
 		</div>
-		<div class="right">
-			<Fundraiser />
+
+		<div class="right steps-section">
+			<Steps />
 		</div>
-	</div> -->
-	<div>
+	</div>
+	<!-- <div>
 		<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
 			<img style="width:100%" src="/booking.gif" alt="" />
 		</div>
 		<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
 		<p>{subtext}</p>
-	</div>
+	</div> -->
 
 	<ScrollingList></ScrollingList>
 </section>
@@ -80,5 +82,8 @@
 		.heading span {
 			display: block;
 		}
+	}
+	.steps-section {
+		margin: 4rem 0;
 	}
 </style>

@@ -13,6 +13,7 @@
 	import SkillsModal from '$lib/components/Skills/SkillsModal.svelte';
 	import Swal from 'sweetalert2';
 	import Comic from '$lib/components/Buttons/comic.svelte';
+	import { page } from '$app/stores';
 
 	let first_name = '';
 	let last_name = '';
@@ -21,15 +22,22 @@
 	let password_confirmation = '';
 	let profession = '';
 	let company = '';
-	let linkedin_url = ''; // Add this variable
+	let linkedin_url = '';
 	let errorMessage = '';
 	let successMessage = '';
-
-	onMount(() => {});
 
 	let formFor = '';
 	let mentorSkills = [];
 	let menteeSkills = [];
+
+	$: {
+		const type = $page.url.searchParams.get('type');
+		if (type && (type === 'Mentor' || type === 'Mentee')) {
+			formFor = type;
+		}
+	}
+
+	onMount(() => {});
 
 	function addSkill() {
 		modals.open(SkillsModal, {
