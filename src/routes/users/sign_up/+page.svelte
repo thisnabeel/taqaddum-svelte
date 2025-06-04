@@ -64,11 +64,6 @@
 		errorMessage = '';
 		successMessage = '';
 
-		if (!$avatar_cropped_blob_url) {
-			raiseError('Avatar Image is Required.');
-			return;
-		}
-
 		if (
 			!first_name ||
 			!last_name ||
@@ -141,32 +136,33 @@
 
 			if (response.id) {
 				successMessage = 'Account created successfully! Redirecting...';
-
 				user.set({ ...response, mode: formFor });
 
-				Swal.close();
-				Swal.fire({
-					title: 'Please Hold...',
-					text: 'Uploading your Profile Picture...',
-					showCloseButton: false,
-					showConfirmButton: false,
-					allowOutsideClick: false
-				});
-				let fd = new FormData();
+				// Only upload avatar if one was selected
+				if ($avatar_cropped_blob_url) {
+					Swal.close();
+					Swal.fire({
+						title: 'Please Hold...',
+						text: 'Uploading your Profile Picture...',
+						showCloseButton: false,
+						showConfirmButton: false,
+						allowOutsideClick: false
+					});
 
-				const avatar_res = await API.post(
-					'/upload_avatar',
-					{
-						avatar_original: $avatar_original,
-						avatar_cropped: $avatar_cropped,
-						user_id: response.id
-					},
-					{
-						'Content-Type': 'multipart/form-data'
-					}
-				);
-				console.log(avatar_res);
-				user.set({ ...avatar_res, mode: formFor });
+					const avatar_res = await API.post(
+						'/upload_avatar',
+						{
+							avatar_original: $avatar_original,
+							avatar_cropped: $avatar_cropped,
+							user_id: response.id
+						},
+						{
+							'Content-Type': 'multipart/form-data'
+						}
+					);
+					user.set({ ...avatar_res, mode: formFor });
+				}
+
 				Swal.close();
 				// Account created successfully! Redirecting...
 				Swal.fire({

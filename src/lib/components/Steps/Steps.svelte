@@ -1,5 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { stories, fetchStories } from '$lib/stores/stories';
+	import { onMount } from 'svelte';
+
 	let activeTab = 'mentee';
 
 	const menteeSteps = [
@@ -18,9 +21,33 @@
 		const role = activeTab === 'mentee' ? 'Mentee' : 'Mentor';
 		goto(`/users/sign_up?type=${role}`);
 	}
+
+	onMount(() => {
+		fetchStories();
+	});
 </script>
 
 <div class="steps-container">
+	<div class="folks">
+		{#if $stories.length > 0}
+			{#each $stories as story}
+				<div class="mentor-story">
+					<img
+						src={story.user.avatar_cropped_url}
+						alt={`${story.user.first_name} ${story.user.last_name}`}
+						class="mentor-avatar"
+					/>
+					<div class="mentor-info">
+						<span class="mentor-name">{story.user.first_name}</span>
+						<span class="mentor-title">{story.profession}</span>
+					</div>
+				</div>
+			{/each}
+		{/if}
+	</div>
+
+	<h3>How it Works:</h3>
+
 	<div class="tabs">
 		<button class:active={activeTab === 'mentee'} on:click={() => (activeTab = 'mentee')}>
 			Mentee
@@ -31,7 +58,6 @@
 	</div>
 
 	<div class="steps-content">
-		<h3>How it Works:</h3>
 		<div class="steps-list">
 			{#if activeTab === 'mentee'}
 				{#each menteeSteps as step, i}
@@ -158,5 +184,49 @@
 	.get-started:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	.folks {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.mentor-story {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.mentor-avatar {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 3px solid white;
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+		transition: transform 0.2s ease;
+	}
+
+	.mentor-avatar:hover {
+		transform: scale(1.1);
+	}
+
+	.mentor-info {
+		text-align: center;
+	}
+
+	.mentor-name {
+		display: block;
+		font-weight: 500;
+		font-size: 0.9rem;
+	}
+
+	.mentor-title {
+		display: block;
+		font-size: 0.8rem;
+		color: #666;
 	}
 </style>
