@@ -82,6 +82,10 @@
 		.heading span {
 			display: block;
 		}
+
+		.steps-section {
+			margin: 0 !important;
+		}
 	}
 	.steps-section {
 		margin: 4rem 0;

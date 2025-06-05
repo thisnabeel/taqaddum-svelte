@@ -28,6 +28,7 @@
 </script>
 
 <div class="steps-container">
+	<h4 class="folks-heading">Some of our <i style="color: #007bff">vetted</i> mentors</h4>
 	<div class="folks">
 		{#if $stories.length > 0}
 			{#each $stories as story}
@@ -228,5 +229,12 @@
 		display: block;
 		font-size: 0.8rem;
 		color: #666;
+	}
+
+	.folks-heading {
+		text-align: center;
+		margin-bottom: 1.5rem;
+		font-size: 1.2rem;
+		color: #333;
 	}
 </style>
