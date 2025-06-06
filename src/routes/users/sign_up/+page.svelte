@@ -56,7 +56,26 @@
 	}
 
 	function isValidLinkedInUrl(url) {
-		const linkedInRegex = /^https:\/\/(www\.)?linkedin\.com\/.*$/;
+		// Allow any protocol (http, https) or no protocol
+		// Allow optional www
+		// Require linkedin.com/in/ followed by a username
+		const linkedInRegex = /^(?:(?:https?:)?\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/;
+
+		// If URL is provided but doesn't match the format, try to fix it
+		if (url && !linkedInRegex.test(url)) {
+			// Extract username if it's just the username
+			const usernameMatch = url.match(/^[a-zA-Z0-9-]+$/);
+			if (usernameMatch) {
+				return isValidLinkedInUrl(`https://linkedin.com/in/${usernameMatch[0]}`);
+			}
+
+			// Extract username if it's a partial LinkedIn URL
+			const partialMatch = url.match(/linkedin\.com\/in\/([a-zA-Z0-9-]+)/);
+			if (partialMatch) {
+				return isValidLinkedInUrl(`https://linkedin.com/in/${partialMatch[1]}`);
+			}
+		}
+
 		return linkedInRegex.test(url);
 	}
 

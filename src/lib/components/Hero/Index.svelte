@@ -6,13 +6,27 @@
 
 	export let subtext =
 		"Get the kind of personalized advice you'd never find reading blog posts or watching courses.";
+
+	let showSecondEmail = false;
 </script>
 
 <section class="hero">
 	<div class="fundraiser" id="fundraiser">
 		<div class="left">
-			<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
-				<img style="width:100%" src="/cta2.png" alt="" />
+			<div class="email-stack" on:click={() => (showSecondEmail = !showSecondEmail)}>
+				<img
+					class="email-img"
+					class:hidden={showSecondEmail}
+					src="/email-1.jpg"
+					alt="Email example 1"
+				/>
+				<img
+					class="email-img second"
+					class:hidden={!showSecondEmail}
+					src="/email-2.jpg"
+					alt="Email example 2"
+				/>
+				<img class="email-img click-up" class:hidden={showSecondEmail} src="/cta-click-up.png" />
 			</div>
 			<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
 			<p>{subtext}</p>
@@ -22,13 +36,6 @@
 			<Steps />
 		</div>
 	</div>
-	<!-- <div>
-		<div class="text-center" style="width: 23em; display:inline-block;margin-bottom:20px">
-			<img style="width:100%" src="/booking.gif" alt="" />
-		</div>
-		<h3 class="heading">Islamic Values, <span>Professional Success.</span></h3>
-		<p>{subtext}</p>
-	</div> -->
 
 	<ScrollingList></ScrollingList>
 </section>
@@ -46,11 +53,57 @@
 	.fundraiser .right {
 		flex: 1 1 50%;
 	}
+
+	.email-stack {
+		width: 23em;
+		display: inline-block;
+		margin-bottom: 20px;
+		position: relative;
+		cursor: pointer;
+	}
+
+	.email-img {
+		width: 100%;
+		border-radius: 8px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		transition: all 0.3s ease;
+		opacity: 1;
+	}
+
+	.email-img.click-up {
+		box-shadow: none;
+		transition: all 0.5s ease;
+		width: 50%;
+	}
+
+	.email-img.hidden {
+		display: none;
+	}
+
+	.email-img.second {
+		position: static;
+	}
+
+	.email-img.hidden {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	.email-img.visible {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.email-img:hover {
+		transform: translateY(-5px);
+	}
+
 	.hero {
 		text-align: center;
 		padding: 50px 20px;
 		padding-top: 0px;
 	}
+
 	.search-bar {
 		display: flex;
 		justify-content: center;
@@ -61,6 +114,7 @@
 	.search-bar :global(input) {
 		height: 100%;
 	}
+
 	.search-bar input,
 	.search-bar select,
 	.search-bar button {
@@ -68,6 +122,7 @@
 		border: 1px solid #ddd;
 		border-radius: 5px;
 	}
+
 	.search-bar button {
 		background: black;
 		color: white;
