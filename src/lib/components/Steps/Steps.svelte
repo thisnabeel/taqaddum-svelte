@@ -1,9 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { stories, fetchStories } from '$lib/stores/stories';
+	import { stories, fetchStories, activeRole } from '$lib/stores/stories';
 	import { onMount } from 'svelte';
-
-	let activeTab = 'mentee';
 
 	const menteeSteps = [
 		"Tell us what you're pursuing.",
@@ -50,17 +48,17 @@
 	<h3>How it Works:</h3>
 
 	<div class="tabs">
-		<button class:active={activeTab === 'mentee'} on:click={() => (activeTab = 'mentee')}>
+		<button class:active={$activeRole === 'mentee'} on:click={() => ($activeRole = 'mentee')}>
 			Mentee
 		</button>
-		<button class:active={activeTab === 'mentor'} on:click={() => (activeTab = 'mentor')}>
+		<button class:active={$activeRole === 'mentor'} on:click={() => ($activeRole = 'mentor')}>
 			Mentor
 		</button>
 	</div>
 
 	<div class="steps-content">
 		<div class="steps-list">
-			{#if activeTab === 'mentee'}
+			{#if $activeRole === 'mentee'}
 				{#each menteeSteps as step, i}
 					<div class="step">
 						<div class="step-number">Step {i + 1}</div>

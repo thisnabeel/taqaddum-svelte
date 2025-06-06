@@ -3,6 +3,7 @@
 	import ScrollingList from '../Skills/ScrollingList.svelte';
 	import Search from '../Skills/Search.svelte';
 	import Steps from '../Steps/Steps.svelte';
+	import { activeRole } from '$lib/stores/stories';
 
 	export let subtext =
 		"Get the kind of personalized advice you'd never find reading blog posts or watching courses.";
@@ -13,17 +14,25 @@
 <section class="hero">
 	<div class="fundraiser" id="fundraiser">
 		<div class="left">
+			<div class="tabs">
+				<button class:active={$activeRole === 'mentee'} on:click={() => ($activeRole = 'mentee')}>
+					Mentee
+				</button>
+				<button class:active={$activeRole === 'mentor'} on:click={() => ($activeRole = 'mentor')}>
+					Mentor
+				</button>
+			</div>
 			<div class="email-stack" on:click={() => (showSecondEmail = !showSecondEmail)}>
 				<img
 					class="email-img"
 					class:hidden={showSecondEmail}
-					src="/email-1.jpg"
+					src={$activeRole === 'mentee' ? '/mentee-email-1.jpg' : '/mentor-email-1.jpg'}
 					alt="Email example 1"
 				/>
 				<img
 					class="email-img second"
 					class:hidden={!showSecondEmail}
-					src="/email-2.jpg"
+					src={$activeRole === 'mentee' ? '/mentee-email-2.jpg' : '/mentor-email-2.jpg'}
 					alt="Email example 2"
 				/>
 				<img class="email-img click-up" class:hidden={showSecondEmail} src="/cta-click-up.png" />
@@ -54,6 +63,28 @@
 		flex: 1 1 50%;
 	}
 
+	.tabs {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.tabs button {
+		padding: 0.75rem 2rem;
+		border: none;
+		background: #f5f5f5;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 1.1rem;
+		transition: all 0.3s ease;
+	}
+
+	.tabs button.active {
+		background: black;
+		color: white;
+	}
+
 	.email-stack {
 		width: 23em;
 		display: inline-block;
@@ -82,16 +113,6 @@
 
 	.email-img.second {
 		position: static;
-	}
-
-	.email-img.hidden {
-		opacity: 0;
-		visibility: hidden;
-	}
-
-	.email-img.visible {
-		opacity: 1;
-		visibility: visible;
 	}
 
 	.email-img:hover {
@@ -140,6 +161,10 @@
 
 		.steps-section {
 			margin: 0 !important;
+		}
+
+		.tabs {
+			margin-top: 2rem;
 		}
 	}
 	.steps-section {
