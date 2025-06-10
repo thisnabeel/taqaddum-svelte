@@ -37,7 +37,15 @@
 		}
 	}
 
-	onMount(() => {});
+	onMount(() => {
+		if ($page.url.searchParams.get('type')) {
+			if ($page.url.searchParams.get('type').toLowerCase() === 'mentor') {
+				formFor = 'Mentor';
+			} else if ($page.url.searchParams.get('type').toLowerCase() === 'mentee') {
+				formFor = 'Mentee';
+			}
+		}
+	});
 
 	function addSkill() {
 		modals.open(SkillsModal, {

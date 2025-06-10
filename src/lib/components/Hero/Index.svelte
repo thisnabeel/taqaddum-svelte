@@ -11,6 +11,17 @@
 	let showSecondEmail = false;
 </script>
 
+<div class="enrollment-banner">
+	<span
+		><b>tldr;</b>
+		{#if $activeRole === 'mentee'}
+			Daily personalized list of <u>muslim mentors</u> in your email.
+		{:else}
+			Daily personalized list of <u>muslim mentees</u> in your email.
+		{/if}
+	</span>
+</div>
+
 <section class="hero">
 	<div class="fundraiser" id="fundraiser">
 		<div class="left">
@@ -50,6 +61,43 @@
 </section>
 
 <style>
+	.enrollment-banner {
+		width: 100%;
+		margin-bottom: 1rem;
+		text-align: center;
+	}
+
+	.enrollment-banner span {
+		display: inline-block;
+		background-color: #d9f99d;
+		color: #374151;
+		padding: 0.25rem 1.5rem;
+		border-radius: 9999px;
+		font-size: 0.875rem;
+	}
+
+	.email-img.click-up {
+		box-shadow: none;
+		transition: all 0.5s ease;
+		width: 50%;
+		position: relative;
+		bottom: -10px;
+		right: 0;
+		animation: float 2s ease-in-out infinite;
+	}
+
+	@keyframes float {
+		0% {
+			transform: translateY(0px);
+		}
+		50% {
+			transform: translateY(-8px);
+		}
+		100% {
+			transform: translateY(0px);
+		}
+	}
+
 	.fundraiser {
 		display: flex;
 		align-items: center;
@@ -99,12 +147,6 @@
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 		transition: all 0.3s ease;
 		opacity: 1;
-	}
-
-	.email-img.click-up {
-		box-shadow: none;
-		transition: all 0.5s ease;
-		width: 50%;
 	}
 
 	.email-img.hidden {
