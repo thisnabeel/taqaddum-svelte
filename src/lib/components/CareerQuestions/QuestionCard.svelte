@@ -110,12 +110,14 @@
 					<!-- <i class="fa fa-tag"></i> -->
 					{question.menteeship.profession} @ {question.menteeship.company}
 				</div>
-				<div>
-					<div class="status-indicator">
-						<i class="fa fa-clock"></i>
-						<span>Awaiting response</span>
+				{#if answers.length === 0}
+					<div>
+						<div class="status-indicator">
+							<i class="fa fa-clock"></i>
+							<span>Awaiting response</span>
+						</div>
 					</div>
-				</div>
+				{/if}
 			{/if}
 		</div>
 		<div class="header-actions">
