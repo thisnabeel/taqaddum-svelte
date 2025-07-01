@@ -10,14 +10,18 @@
 	import { modals } from 'svelte-modals';
 	import SkillsModal from '$lib/components/Skills/SkillsModal.svelte';
 	import API from '$lib/api/api';
+	import Swal from 'sweetalert2';
+	import { user } from '$lib/stores/user';
 	export let lead = null;
 	export let token = '';
+	let email = '';
 	let password = '';
 	let password_confirmation = '';
 	let skills = [];
 	let newSkill = '';
 	let errorMessage = '';
 	let showSkillModal = false;
+	let formFor = 'Mentor';
 
 	function capitalizeFirstLetter(string) {
 		if (!string) return '';
@@ -41,10 +45,6 @@
 
 	async function handleSubmit() {
 		console.log({ avatar_cropped: $avatar_cropped, avatar_original: $avatar_original });
-		if (!$avatar_cropped && !$avatar_original) {
-			errorMessage = 'Avatar is required.';
-			return;
-		}
 		if (!password) {
 			errorMessage = 'Password is required.';
 			return;
@@ -63,16 +63,62 @@
 			avatar_original: $avatar_original,
 			avatar_cropped: $avatar_cropped,
 			password,
+			email,
 			mentoships: lead.mentorships
 		});
 		const res = await API.patch('/users/preapprovals/' + token, {
 			avatar_original: $avatar_original,
 			avatar_cropped: $avatar_cropped,
 			password,
+			email,
 			mentorships: lead.mentorships,
 			converted_at: new Date().toISOString()
 		});
 		console.log({ res });
+
+		if (res.id) {
+			user.set({ ...res, mode: formFor });
+
+			// Only upload avatar if one was selected
+			if ($avatar_cropped_blob_url) {
+				Swal.close();
+				Swal.fire({
+					title: 'Please Hold...',
+					text: 'Uploading your Profile Picture...',
+					showCloseButton: false,
+					showConfirmButton: false,
+					allowOutsideClick: false
+				});
+
+				const avatar_res = await API.post(
+					'/upload_avatar',
+					{
+						avatar_original: $avatar_original,
+						avatar_cropped: $avatar_cropped,
+						user_id: res.id
+					},
+					{
+						'Content-Type': 'multipart/form-data'
+					}
+				);
+				user.set({ ...avatar_res, mode: formFor });
+			}
+
+			Swal.close();
+			// Account created successfully! Redirecting...
+			Swal.fire({
+				title: 'Account created successfully!...',
+				text: 'Redirecting...',
+				showCloseButton: false,
+				showConfirmButton: false,
+				allowOutsideClick: false
+			});
+			setTimeout(() => (window.location.href = '/'), 2000);
+		} else {
+			const data = await res.json();
+			console.log({ data });
+			// raiseError(data.error || 'Something went wrong. Please try again.');
+		}
 	}
 
 	function addSkill() {
@@ -111,6 +157,13 @@
 				<button class="add-skill-btn" on:click={addSkill}>+ Add Skills</button>
 			</div>
 		</div>
+
+		{#if lead?.email.includes('@placeholder.com')}
+			<div class="form-section">
+				<label for="email" class="form-label">Email</label>
+				<input type="email" id="email" bind:value={email} class="form-input" />
+			</div>
+		{/if}
 
 		<div class="form-section">
 			<label for="password" class="form-label">Password</label>

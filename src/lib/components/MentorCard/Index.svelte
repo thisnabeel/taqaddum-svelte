@@ -1,13 +1,17 @@
 <script>
 	export let mentor;
 	export let mentorship;
+	export let blurred = true;
 </script>
 
 <a class="mentor-card clean" href="/mentors/{mentor.id}">
 	<img src={mentor.avatar_cropped_url} alt={mentor.first_name + ' ' + mentor.last_name} />
 	<div class="info">
-		<h3>{mentor.first_name} {mentor.last_name}</h3>
-		<p>{mentorship.profession}<br /><span style="color:#ffff93">@ {mentorship.company}</span></p>
+		<h3>
+			{mentor.first_name}
+		</h3>
+		<p>{mentorship.profession}</p>
+		<h3 style="color:#ffff93">{mentorship.company}</h3>
 
 		<b> Mentoring: </b>
 		<ul class="clean-list skills">
@@ -51,5 +55,9 @@
 		justify-content: center;
 		gap: 10px;
 		margin-top: 5px;
+	}
+
+	h3.blurred {
+		filter: blur(6px);
 	}
 </style>

@@ -124,7 +124,7 @@
 					>
 						<div>
 							<img
-								src={slot.user.avatar_cropped_url}
+								src={slot.user.avatar_cropped_url || '/placeholder.png'}
 								class="mentor-avatar"
 								alt={`${slot.user.first_name} ${slot.user.last_name}`}
 							/>

@@ -27,18 +27,20 @@
 
 <div class="steps-container">
 	<h4 class="folks-heading">Some of our <i style="color: #007bff">vetted</i> mentors</h4>
+	<p class="folks-subheading">(Name & Avatar are visible to connections only)</p>
 	<div class="folks">
 		{#if $stories.length > 0}
 			{#each $stories as story}
 				<div class="mentor-story">
 					<img
-						src={story.user.avatar_cropped_url}
+						src={story.user.avatar_cropped_url || '/placeholder.png'}
 						alt={`${story.user.first_name} ${story.user.last_name}`}
 						class="mentor-avatar"
 					/>
 					<div class="mentor-info">
 						<span class="mentor-name">{story.user.first_name}</span>
 						<span class="mentor-title">{story.profession}</span>
+						<span class="mentor-title" style="color: #007bff">{story.company}</span>
 					</div>
 				</div>
 			{/each}
@@ -231,8 +233,15 @@
 
 	.folks-heading {
 		text-align: center;
-		margin-bottom: 1.5rem;
+		margin-bottom: 0.5rem;
 		font-size: 1.2rem;
 		color: #333;
+	}
+	.folks-subheading {
+		text-align: center;
+		font-size: 17px;
+		margin-bottom: 0.5rem;
+		color: #6e6eff;
+		font-weight: 300;
 	}
 </style>

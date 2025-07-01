@@ -176,7 +176,7 @@
 				>
 			</IfAdmin>
 			<button class="btn" on:click={() => visit('/users/edit')}>
-				<img src={$user.avatar_cropped_url} class="mentor-avatar" />
+				<img src={$user.avatar_cropped_url || '/placeholder.png'} class="mentor-avatar" />
 				{$user.first_name}
 				{$user.last_name}</button
 			>

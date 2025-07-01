@@ -1,9 +1,14 @@
 <script>
 	export let status = 'approved';
+	export let href = null;
 </script>
 
 <!-- From Uiverse.io by augustin_4687 -->
-<button class="button" class:gray={status === 'pending approval'}>
+<button
+	class="button"
+	on:click={() => href && (window.location.href = href)}
+	class:gray={status === 'pending approval'}
+>
 	<div><span><slot /></span></div>
 </button>
 

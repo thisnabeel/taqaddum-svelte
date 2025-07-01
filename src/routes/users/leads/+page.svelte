@@ -49,8 +49,8 @@
 		errorMessage = '';
 		successMessage = '';
 
-		if (!first_name || !last_name || !email || !linkedin_url) {
-			errorMessage = 'All fields are required, including LinkedIn URL.';
+		if (!first_name || !last_name || !linkedin_url) {
+			errorMessage = 'First name, last name, and LinkedIn URL are required.';
 			return;
 		}
 
@@ -68,7 +68,8 @@
 					company,
 					linkedin_url,
 					mentorSkills,
-					menteeSkills
+					menteeSkills,
+					type: formFor
 				}
 			});
 
@@ -130,8 +131,8 @@
 	}
 
 	function goToStep2() {
-		if (!first_name || !last_name || !email || !linkedin_url) {
-			errorMessage = 'All fields are required, including LinkedIn URL.';
+		if (!first_name || !last_name || !linkedin_url) {
+			errorMessage = 'First name, last name, and LinkedIn URL are required.';
 			return;
 		}
 		errorMessage = '';

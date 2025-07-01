@@ -15,9 +15,9 @@
 	<span
 		><b>tldr;</b>
 		{#if $activeRole === 'mentee'}
-			Daily personalized list of <u>muslim mentors</u> in your email.
+			Assistance from <u>Muslim</u> mentors for your career growth.
 		{:else}
-			Daily personalized list of <u>muslim mentees</u> in your email.
+			Assist <u>Muslim</u> mentees in their career growth.
 		{/if}
 	</span>
 </div>
@@ -57,7 +57,7 @@
 		</div>
 	</div>
 
-	<ScrollingList></ScrollingList>
+	<!-- <ScrollingList></ScrollingList> -->
 </section>
 
 <style>
