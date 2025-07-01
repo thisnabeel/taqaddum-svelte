@@ -108,7 +108,13 @@
 			{#if question.questionable}
 				<div class="skill-badge">
 					<!-- <i class="fa fa-tag"></i> -->
-					{question.questionable.title}
+					{question.menteeship.profession} @ {question.menteeship.company}
+				</div>
+				<div>
+					<div class="status-indicator">
+						<i class="fa fa-clock"></i>
+						<span>Awaiting response</span>
+					</div>
 				</div>
 			{/if}
 		</div>
@@ -205,21 +211,19 @@
 							</div>
 						{/each}
 					</div>
-				{:else if answersLoaded && answers.length === 0}
-					<div class="no-answers">No answers yet.</div>
-				{/if}
+				{:else if answersLoaded && answers.length === 0}{/if}
 			</div>
 		{/if}
 	</div>
 
-	<div class="card-footer">
+	<!-- <div class="card-footer">
 		{#if answers.length < 1}
 			<div class="status-indicator">
 				<i class="fa fa-clock"></i>
 				<span>Awaiting response</span>
 			</div>
 		{/if}
-	</div>
+	</div> -->
 </div>
 
 <style>
@@ -331,7 +335,6 @@
 		line-height: 1.6;
 		color: #2c3e50;
 		font-weight: 400;
-		text-align: justify;
 	}
 
 	.card-footer {
