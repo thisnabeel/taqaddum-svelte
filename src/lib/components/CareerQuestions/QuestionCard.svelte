@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { inview } from 'svelte-inview';
-	import { user } from '$lib/stores/user';
+	import { user, mentorships } from '$lib/stores/user';
 	import API from '$lib/api/api';
 
+	$: console.log($mentorships);
 	export let question: {
 		id: number;
 		body: string;
@@ -103,61 +104,51 @@
 	use:inview={{ rootMargin: '0px 0px -50px 0px', unobserveOnEnter: false }}
 	on:inview_change={handleInViewChange}
 >
-	<div class="card-header">
-		<div class="meta-info">
-			{#if question.questionable}
-				<div class="skill-badge">
-					<!-- <i class="fa fa-tag"></i> -->
-					{question.menteeship.profession} @ {question.menteeship.company}
-				</div>
-				{#if answers.length === 0}
-					<div>
-						<div class="status-indicator">
-							<i class="fa fa-clock"></i>
-							<span>Awaiting response</span>
-						</div>
-					</div>
-				{/if}
-			{/if}
-		</div>
-		<div class="header-actions">
-			{#if $user && $user.id === question.user.id}
-				<button class="delete-btn" on:click={handleDelete} title="Delete question">
-					<i class="fa fa-trash"></i>
-				</button>
-			{/if}
-			<span class="date-badge">
-				<i class="fa fa-calendar-alt"></i>
-				{new Date(question.created_at).toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				})}
-			</span>
-		</div>
-	</div>
-
 	<div class="card-body">
 		<div class="question-content">
 			{question.body}
 		</div>
 
 		{#if $user}
-			<hr />
+			<!-- <hr /> -->
 			<div class="question-answers">
 				<div class="answers-actions">
-					{#if answers.length > 0}
-						<button class="replies-btn" on:click={() => (showReplies = !showReplies)}>
-							<i class="fa fa-comments"></i>
-							{answers.length} Replies
-						</button>
+					{#if question.questionable}
+						<div class="skill-badge">
+							{question.menteeship.profession} @ {question.menteeship.company}
+							{#if $user && question.user.id === $user.id}
+								<span class="mentorship-info">You</span>
+							{/if}
+						</div>
 					{/if}
-					{#if !showAnswerForm && !submittedAnswer}
-						<button class="answer-btn" on:click={handleAnswer}>
-							<i class="fa fa-reply"></i>
-							Answer
-						</button>
-					{/if}
+					<div class="actions-row">
+						<div class="answers-actions-spacer"></div>
+						{#if answers.length > 0}
+							<button class="replies-btn" on:click={() => (showReplies = !showReplies)}>
+								<i class="fa fa-comments"></i>
+								{answers.length}
+								{answers.length === 1 ? 'Reply' : 'Replies'}
+							</button>
+						{:else if answers.length === 0}
+							<button class="replies-btn" disabled>
+								<i class="fa fa-clock"></i>
+								Awaiting Response
+							</button>
+						{/if}
+						{#if $user && $mentorships.find((m) => m.skill.id === question.questionable?.id)}
+							{#if !showAnswerForm && !submittedAnswer}
+								<button class="answer-btn" on:click={handleAnswer}>
+									<i class="fa fa-reply"></i>
+									Answer
+								</button>
+							{:else}
+								<button class="answer-btn btn btn-danger" on:click={() => (showAnswerForm = false)}>
+									<i class="fa fa-reply"></i>
+									Cancel
+								</button>
+							{/if}
+						{/if}
+					</div>
 				</div>
 
 				{#if showAnswerForm}
@@ -246,7 +237,7 @@
 		border-color: #007bff;
 	}
 
-	.question-card::before {
+	/* .question-card::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -254,7 +245,7 @@
 		right: 0;
 		height: 4px;
 		background: linear-gradient(90deg, #007bff, #0056b3);
-	}
+	} */
 
 	.card-header {
 		display: flex;
@@ -564,8 +555,41 @@
 
 	.answers-actions {
 		display: flex;
-		gap: 0.5em;
+		align-items: center;
+		gap: 1em;
 		margin-bottom: 0.5em;
+	}
+
+	.actions-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		margin-left: auto;
+	}
+
+	.answers-actions-spacer {
+		flex: 1 1 auto;
+	}
+
+	.skill-badge {
+		margin-right: 0.5em;
+		font-weight: 600;
+		background: rgba(40, 167, 69, 0.1);
+		color: #28a745;
+		border-radius: 1em;
+		padding: 0.25em 1em;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+	}
+
+	.mentorship-info {
+		background: #ffc108;
+		color: #333;
+		border-radius: 1em;
+		padding: 0.15em 0.7em;
+		font-size: 0.95em;
+		margin-left: 0.5em;
 	}
 
 	.replies-btn {
@@ -598,8 +622,29 @@
 		outline: none;
 	}
 
+	.replies-btn:disabled {
+		background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+		color: #856404;
+		border: 1px solid rgba(255, 193, 7, 0.3);
+		cursor: not-allowed;
+		opacity: 0.9;
+		box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+	}
+
+	.replies-btn:disabled:hover {
+		background: linear-gradient(135deg, #ffb300 0%, #ffc107 100%);
+		transform: none;
+		box-shadow: 0 2px 8px rgba(255, 193, 7, 0.25);
+	}
+
 	/* Responsive Design */
 	@media (max-width: 768px) {
+		.actions-row {
+			display: flex;
+			column-gap: 10px;
+			margin-left: 0;
+		}
+
 		.question-card {
 			border-radius: 12px;
 			margin-bottom: 1.25rem;
@@ -668,6 +713,20 @@
 	}
 
 	@media (max-width: 600px) {
+		.answers-actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.5em;
+		}
+		.answers-actions-spacer {
+			display: none;
+		}
+		.skill-badge {
+			margin-right: 0;
+			margin-bottom: 0.25em;
+			width: 100%;
+			justify-content: flex-start;
+		}
 		.answer-item {
 			padding: 0.75em 0.5em;
 			gap: 0.25em;
@@ -689,10 +748,6 @@
 		}
 		.answer-body {
 			font-size: 1em;
-		}
-		.answers-actions {
-			flex-direction: column;
-			gap: 0.5em;
 		}
 		.replies-btn,
 		.answer-btn {

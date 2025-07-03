@@ -4,3 +4,5 @@ import { readable, writable } from 'svelte/store';
 export const user = storage('user', null);
 export const admin = storage('admin', false);
 export const userView = writable('mentor');
+export const mentorships = writable([]);
+export const menteeships = writable([]);

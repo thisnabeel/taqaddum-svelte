@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import API from '$lib/api/api';
 	import Comic from '$lib/components/Buttons/comic.svelte';
-	import { user } from '$lib/stores/user';
+	import { user, mentorships } from '$lib/stores/user';
 	import { onMount } from 'svelte';
 	import SkillFilter from '$lib/components/Skills/SkillFilter.svelte';
 	import QuestionCard from '$lib/components/CareerQuestions/QuestionCard.svelte';
@@ -73,6 +73,7 @@
 		if (dashboard?.mentees?.pool) {
 			uniqueSkills = [...new Set(dashboard.mentees.pool.map((mentee) => mentee.skill.title))];
 		}
+		mentorships.set(dashboard?.mentorships?.approved);
 	}
 
 	async function fetchMentorQuestions() {
@@ -188,149 +189,151 @@
 		</div>
 
 		<!-- Booked Sessions -->
-		<div class="row mb-4">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-header bg-primary bg-opacity-10">
-						<h3 class="h5 mb-0">My Upcoming Sessions</h3>
-					</div>
-					<div class="card-body">
-						{#if dashboard.bookings && dashboard.bookings.some((slot) => (slot.mentees || []).length > 0)}
-							<!-- Mobile view - card based layout -->
-							<div class="mobile-cards d-block d-lg-none">
-								{#each dashboard.bookings.filter((slot) => (slot.mentees || []).length > 0) as slot}
-									<div class="session-card p-3 mb-3">
-										<div class="d-flex justify-content-between align-items-start mb-3">
-											<div>
-												<div class="fw-bold">{slot.title}</div>
-												<div class="text-muted small">{slot.skill.title}</div>
-												{#if slot.description}
-													<div class="text-muted small">{slot.description}</div>
-												{/if}
-											</div>
-											<a
-												class="btn btn-info btn-sm"
-												on:click={() => {
-													startChatRoom(slot);
-												}}>Enter Meeting</a
-											>
-										</div>
-
-										<div class="mb-3">
-											<div class="fw-bold mb-1">Mentees:</div>
-											<div class="d-flex gap-1 align-items-center flex-wrap">
-												{#each slot.mentees || [] as mentee}
-													<div
-														class="position-relative mentee-avatar-container"
-														title={`${mentee.first_name} ${mentee.last_name}`}
-													>
-														<img
-															src={mentee.avatar_cropped_url}
-															class="mentor-avatar"
-															alt={`${mentee.first_name} ${mentee.last_name}`}
-														/>
-														<span class="mentee-info-tooltip">
-															{mentee.first_name}
-															{mentee.last_name}
-															<br />
-															{mentee.menteeships.find((m) => m.skill.id === slot.skill.id)
-																?.profession || 'No Experience listed'}
-														</span>
-													</div>
-												{/each}
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-
-							<!-- Desktop view - table layout -->
-							<div class="table-responsive d-none d-lg-block">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th>Session Details</th>
-											<th>Mentees</th>
-											<th>Date & Time</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										{#each dashboard.bookings.filter((slot) => (slot.mentees || []).length > 0) as slot}
-											<tr>
-												<td>
+		{#if dashboard.bookings.length > 0}
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-header bg-primary bg-opacity-10">
+							<h3 class="h5 mb-0">My Upcoming Sessions</h3>
+						</div>
+						<div class="card-body">
+							{#if dashboard.bookings && dashboard.bookings.some((slot) => (slot.mentees || []).length > 0)}
+								<!-- Mobile view - card based layout -->
+								<div class="mobile-cards d-block d-lg-none">
+									{#each dashboard.bookings.filter((slot) => (slot.mentees || []).length > 0) as slot}
+										<div class="session-card p-3 mb-3">
+											<div class="d-flex justify-content-between align-items-start mb-3">
+												<div>
 													<div class="fw-bold">{slot.title}</div>
 													<div class="text-muted small">{slot.skill.title}</div>
 													{#if slot.description}
 														<div class="text-muted small">{slot.description}</div>
 													{/if}
-												</td>
-												<td>
-													<div class="d-flex gap-1 align-items-center flex-wrap">
-														{#each slot.mentees || [] as mentee}
-															<div
-																class="position-relative mentee-avatar-container"
-																title={`${mentee.first_name} ${mentee.last_name}`}
-															>
-																<img
-																	src={mentee.avatar_cropped_url}
-																	class="mentor-avatar"
-																	alt={`${mentee.first_name} ${mentee.last_name}`}
-																/>
-																<span class="mentee-info-tooltip">
-																	{mentee.first_name}
-																	{mentee.last_name}
-																	<br />
-																	{mentee.menteeships.find((m) => m.skill.id === slot.skill.id)
-																		?.profession || 'No Experience listed'}
-																</span>
-															</div>
-														{/each}
-													</div>
-												</td>
-												<td>
-													<div>
-														{new Date(slot.start_time).toLocaleDateString('en-US', {
-															weekday: 'short',
-															month: 'short',
-															day: 'numeric',
-															year: 'numeric'
-														})}
-													</div>
-													<div class="text-muted small">
-														{new Date(slot.start_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: slot.timezone
-														})} -
-														{new Date(slot.end_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: slot.timezone
-														})}
-														<div class="text-muted smaller">({slot.timezone})</div>
-													</div>
-												</td>
-												<td>
-													<a
-														class="btn btn-info"
-														on:click={() => {
-															startChatRoom(slot);
-														}}>Enter Meeting</a
-													>
-												</td>
+												</div>
+												<a
+													class="btn btn-info btn-sm"
+													on:click={() => {
+														startChatRoom(slot);
+													}}>Enter Meeting</a
+												>
+											</div>
+
+											<div class="mb-3">
+												<div class="fw-bold mb-1">Mentees:</div>
+												<div class="d-flex gap-1 align-items-center flex-wrap">
+													{#each slot.mentees || [] as mentee}
+														<div
+															class="position-relative mentee-avatar-container"
+															title={`${mentee.first_name} ${mentee.last_name}`}
+														>
+															<img
+																src={mentee.avatar_cropped_url}
+																class="mentor-avatar"
+																alt={`${mentee.first_name} ${mentee.last_name}`}
+															/>
+															<span class="mentee-info-tooltip">
+																{mentee.first_name}
+																{mentee.last_name}
+																<br />
+																{mentee.menteeships.find((m) => m.skill.id === slot.skill.id)
+																	?.profession || 'No Experience listed'}
+															</span>
+														</div>
+													{/each}
+												</div>
+											</div>
+										</div>
+									{/each}
+								</div>
+
+								<!-- Desktop view - table layout -->
+								<div class="table-responsive d-none d-lg-block">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Session Details</th>
+												<th>Mentees</th>
+												<th>Date & Time</th>
+												<th>Status</th>
 											</tr>
-										{/each}
-									</tbody>
-								</table>
-							</div>
-						{:else}
-							<p class="text-muted mb-0">No booked sessions at the moment.</p>
-						{/if}
+										</thead>
+										<tbody>
+											{#each dashboard.bookings.filter((slot) => (slot.mentees || []).length > 0) as slot}
+												<tr>
+													<td>
+														<div class="fw-bold">{slot.title}</div>
+														<div class="text-muted small">{slot.skill.title}</div>
+														{#if slot.description}
+															<div class="text-muted small">{slot.description}</div>
+														{/if}
+													</td>
+													<td>
+														<div class="d-flex gap-1 align-items-center flex-wrap">
+															{#each slot.mentees || [] as mentee}
+																<div
+																	class="position-relative mentee-avatar-container"
+																	title={`${mentee.first_name} ${mentee.last_name}`}
+																>
+																	<img
+																		src={mentee.avatar_cropped_url}
+																		class="mentor-avatar"
+																		alt={`${mentee.first_name} ${mentee.last_name}`}
+																	/>
+																	<span class="mentee-info-tooltip">
+																		{mentee.first_name}
+																		{mentee.last_name}
+																		<br />
+																		{mentee.menteeships.find((m) => m.skill.id === slot.skill.id)
+																			?.profession || 'No Experience listed'}
+																	</span>
+																</div>
+															{/each}
+														</div>
+													</td>
+													<td>
+														<div>
+															{new Date(slot.start_time).toLocaleDateString('en-US', {
+																weekday: 'short',
+																month: 'short',
+																day: 'numeric',
+																year: 'numeric'
+															})}
+														</div>
+														<div class="text-muted small">
+															{new Date(slot.start_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: slot.timezone
+															})} -
+															{new Date(slot.end_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: slot.timezone
+															})}
+															<div class="text-muted smaller">({slot.timezone})</div>
+														</div>
+													</td>
+													<td>
+														<a
+															class="btn btn-info"
+															on:click={() => {
+																startChatRoom(slot);
+															}}>Enter Meeting</a
+														>
+													</td>
+												</tr>
+											{/each}
+										</tbody>
+									</table>
+								</div>
+							{:else}
+								<p class="text-muted mb-0">No booked sessions at the moment.</p>
+							{/if}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{/if}
 
 		<!-- Mentee Pool -->
 		{#if false}

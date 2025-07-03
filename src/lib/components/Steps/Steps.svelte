@@ -6,13 +6,13 @@
 	const menteeSteps = [
 		"Tell us what you're pursuing.",
 		'Our team will verify your pursuit.',
-		"Once approved, you'll start receiving Mentor Matches in your inbox."
+		'Once approved, start seeking advice from mentors who are experts in your field.'
 	];
 
 	const mentorSteps = [
 		'Tell us about your professional experience.',
 		'Our team will verify your experience.',
-		"Once approved, you'll start receiving Mentee Matches in your inbox."
+		'Once approved, start helping mentees coming up in your field.'
 	];
 
 	function handleGetStarted() {

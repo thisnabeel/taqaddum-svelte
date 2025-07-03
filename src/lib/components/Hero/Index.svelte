@@ -15,9 +15,9 @@
 	<span
 		><b>tldr;</b>
 		{#if $activeRole === 'mentee'}
-			Answers from <u>Muslim</u> mentors for your career growth.
+			Advice from <u>Muslim</u> mentors for your career growth.
 		{:else}
-			Answer <u>Muslim</u> mentees in their career growth.
+			Advise <u>Muslim</u> mentees in their career growth.
 		{/if}
 	</span>
 </div>

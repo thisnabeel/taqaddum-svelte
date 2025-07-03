@@ -1,23 +1,20 @@
 <script>
-	let showGuide = false;
+	// No need for showGuide
 </script>
 
 <div class="accordion">
-	<button class="accordion-header" on:click={() => (showGuide = !showGuide)}>
-		{showGuide ? 'Click here to hide ' : 'Click here to show '}
-		<b style="margin-left: 4px">Guide to Meeting Slots</b>
-	</button>
-	{#if showGuide}
-		<div class="accordion-content">
-			<!-- Explanation -->
-			<div class="explanation">
-				<h3>How Your Meetup Slots Are Generated</h3>
-				<p>
-					Meetups are automatically created based on your offerings and availabilities. "Open" means
-					the slot is available for booking. "Denied" means the generated slot is denied by you.
-				</p>
-			</div>
+	<div class="accordion-content">
+		<!-- Explanation -->
+		<div class="explanation">
+			<h3>How Your Meetup Slots Are Generated</h3>
+			<p>
+				By providing your availability, our system can generate the best possible meetup times for
+				you with mentors. The more accurate and flexible your availability, the more likely you'll
+				be matched with mentors who fit your schedule and goals.
+			</p>
+		</div>
 
+		{#if false}
 			<!-- Status Legend (Table) -->
 			<div class="legend-container">
 				<table class="legend-table">
@@ -42,8 +39,8 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <style>

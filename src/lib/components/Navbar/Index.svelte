@@ -136,6 +136,11 @@
 				>
 			</li>
 		{/if}
+		<li>
+			<a href="/clubs">
+				<i class="fa fa-users"></i> Clubs
+			</a>
+		</li>
 	</ul>
 
 	<!-- Desktop Auth Buttons -->

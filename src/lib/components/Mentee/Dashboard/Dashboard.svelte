@@ -224,147 +224,41 @@
 			</div>
 		</div>
 
-		<!-- Scheduled Sessions -->
+		<!-- Portfolio -->
 		<div class="row mb-4">
 			<div class="col-12">
 				<div class="card">
-					<div class="card-header bg-primary bg-opacity-10">
-						<h3 class="h5 mb-0">Your Schedule:</h3>
+					<div class="card-header bg-warning bg-opacity-10">
+						<h3 class="h5 mb-0">Portfolio</h3>
 					</div>
 					<div class="card-body">
-						{#if dashboard.bookings && dashboard.bookings.length > 0}
-							<div class="mobile-cards">
-								{#each dashboard.bookings as booking}
-									<div class="session-card p-3 mb-3">
-										<div class="d-flex justify-content-between align-items-start mb-3">
-											<div>
-												<div class="fw-bold">{booking.slot.title}</div>
-												<div class="text-muted small">{booking.slot.skill.title}</div>
-											</div>
-											<div class="meeting-options">
-												<a
-													class="btn btn-info btn-sm"
-													on:click={() => {
-														startChatRoom(booking.slot);
-													}}>Enter Meeting</a
-												>
-												<div
-													class="btn btn-outline-danger"
-													on:click={() => dropOutOfMeeting(booking)}
-												>
-													<div class="fa fa-times"></div>
-												</div>
-											</div>
-										</div>
+						<p>No Proofs of Work at the moment.</p>
+					</div>
+				</div>
+			</div>
+		</div>
 
-										<div class="d-flex align-items-center gap-2 mb-2">
-											<img
-												src={booking.slot.user_id === booking.user.id
-													? booking.user.avatar_cropped_url || '/placeholder.png'
-													: dashboard.mentors.pool.find((m) => m.user.id === booking.slot.user_id)
-															?.user.avatar_cropped_url || '/placeholder.png'}
-												class="mentor-avatar"
-												alt="mentor avatar"
-											/>
-											<div>
-												{booking.slot.user_id === booking.user.id
-													? `${booking.user.first_name} ${booking.user.last_name}`
-													: dashboard.mentors.pool.find((m) => m.user.id === booking.slot.user_id)
-															?.user.first_name}
-											</div>
-										</div>
-
-										<div class="text-muted">
-											<div>
-												{new Date(booking.slot.start_time).toLocaleDateString('en-US', {
-													weekday: 'short',
-													month: 'short',
-													day: 'numeric',
-													year: 'numeric'
-												})}
-											</div>
-											<div class="small">
-												{new Date(booking.slot.start_time).toLocaleTimeString('en-US', {
-													hour: '2-digit',
-													minute: '2-digit',
-													timeZone: booking.slot.timezone
-												})} -
-												{new Date(booking.slot.end_time).toLocaleTimeString('en-US', {
-													hour: '2-digit',
-													minute: '2-digit',
-													timeZone: booking.slot.timezone
-												})}
-												({booking.slot.timezone})
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-
-							<!-- Desktop table, hidden on mobile -->
-							<div class="table-responsive d-none d-lg-block">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th>Session</th>
-											<th>Mentor</th>
-											<th>Date & Time</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody>
-										{#each dashboard.bookings as booking}
-											<tr>
-												<td>
+		<!-- Scheduled Sessions -->
+		{#if dashboard.bookings.length > 0}
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-header bg-primary bg-opacity-10">
+							<h3 class="h5 mb-0">Your Schedule:</h3>
+						</div>
+						<div class="card-body">
+							{#if dashboard.bookings && dashboard.bookings.length > 0}
+								<div class="mobile-cards">
+									{#each dashboard.bookings as booking}
+										<div class="session-card p-3 mb-3">
+											<div class="d-flex justify-content-between align-items-start mb-3">
+												<div>
 													<div class="fw-bold">{booking.slot.title}</div>
 													<div class="text-muted small">{booking.slot.skill.title}</div>
-												</td>
-												<td>
-													<div class="d-flex align-items-center gap-2">
-														<img
-															src={booking.slot.user_id === booking.user.id
-																? booking.user.avatar_cropped_url || '/placeholder.png'
-																: dashboard.mentors.pool.find(
-																		(m) => m.user.id === booking.slot.user_id
-																	)?.user.avatar_cropped_url || '/placeholder.png'}
-															class="mentor-avatar"
-															alt="mentor avatar"
-														/>
-														<div>
-															{booking.slot.user_id === booking.user.id
-																? `${booking.user.first_name} ${booking.user.last_name}`
-																: dashboard.mentors.pool.find(
-																		(m) => m.user.id === booking.slot.user_id
-																	)?.user.first_name}
-														</div>
-													</div>
-												</td>
-												<td>
-													<div>
-														{new Date(booking.slot.start_time).toLocaleDateString('en-US', {
-															weekday: 'short',
-															month: 'short',
-															day: 'numeric',
-															year: 'numeric'
-														})}
-													</div>
-													<div class="text-muted small">
-														{new Date(booking.slot.start_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: booking.slot.timezone
-														})} -
-														{new Date(booking.slot.end_time).toLocaleTimeString('en-US', {
-															hour: '2-digit',
-															minute: '2-digit',
-															timeZone: booking.slot.timezone
-														})}
-														({booking.slot.timezone})
-													</div>
-												</td>
-												<td>
+												</div>
+												<div class="meeting-options">
 													<a
-														class="btn btn-info"
+														class="btn btn-info btn-sm"
 														on:click={() => {
 															startChatRoom(booking.slot);
 														}}>Enter Meeting</a
@@ -375,19 +269,141 @@
 													>
 														<div class="fa fa-times"></div>
 													</div>
-												</td>
+												</div>
+											</div>
+
+											<div class="d-flex align-items-center gap-2 mb-2">
+												<img
+													src={booking.slot.user_id === booking.user.id
+														? booking.user.avatar_cropped_url || '/placeholder.png'
+														: dashboard.mentors.pool.find((m) => m.user.id === booking.slot.user_id)
+																?.user.avatar_cropped_url || '/placeholder.png'}
+													class="mentor-avatar"
+													alt="mentor avatar"
+												/>
+												<div>
+													{booking.slot.user_id === booking.user.id
+														? `${booking.user.first_name} ${booking.user.last_name}`
+														: dashboard.mentors.pool.find((m) => m.user.id === booking.slot.user_id)
+																?.user.first_name}
+												</div>
+											</div>
+
+											<div class="text-muted">
+												<div>
+													{new Date(booking.slot.start_time).toLocaleDateString('en-US', {
+														weekday: 'short',
+														month: 'short',
+														day: 'numeric',
+														year: 'numeric'
+													})}
+												</div>
+												<div class="small">
+													{new Date(booking.slot.start_time).toLocaleTimeString('en-US', {
+														hour: '2-digit',
+														minute: '2-digit',
+														timeZone: booking.slot.timezone
+													})} -
+													{new Date(booking.slot.end_time).toLocaleTimeString('en-US', {
+														hour: '2-digit',
+														minute: '2-digit',
+														timeZone: booking.slot.timezone
+													})}
+													({booking.slot.timezone})
+												</div>
+											</div>
+										</div>
+									{/each}
+								</div>
+
+								<!-- Desktop table, hidden on mobile -->
+								<div class="table-responsive d-none d-lg-block">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Session</th>
+												<th>Mentor</th>
+												<th>Date & Time</th>
+												<th>Status</th>
 											</tr>
-										{/each}
-									</tbody>
-								</table>
-							</div>
-						{:else}
-							<p class="text-muted mb-0">No Upcoming Meetings...</p>
-						{/if}
+										</thead>
+										<tbody>
+											{#each dashboard.bookings as booking}
+												<tr>
+													<td>
+														<div class="fw-bold">{booking.slot.title}</div>
+														<div class="text-muted small">{booking.slot.skill.title}</div>
+													</td>
+													<td>
+														<div class="d-flex align-items-center gap-2">
+															<img
+																src={booking.slot.user_id === booking.user.id
+																	? booking.user.avatar_cropped_url || '/placeholder.png'
+																	: dashboard.mentors.pool.find(
+																			(m) => m.user.id === booking.slot.user_id
+																		)?.user.avatar_cropped_url || '/placeholder.png'}
+																class="mentor-avatar"
+																alt="mentor avatar"
+															/>
+															<div>
+																{booking.slot.user_id === booking.user.id
+																	? `${booking.user.first_name} ${booking.user.last_name}`
+																	: dashboard.mentors.pool.find(
+																			(m) => m.user.id === booking.slot.user_id
+																		)?.user.first_name}
+															</div>
+														</div>
+													</td>
+													<td>
+														<div>
+															{new Date(booking.slot.start_time).toLocaleDateString('en-US', {
+																weekday: 'short',
+																month: 'short',
+																day: 'numeric',
+																year: 'numeric'
+															})}
+														</div>
+														<div class="text-muted small">
+															{new Date(booking.slot.start_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: booking.slot.timezone
+															})} -
+															{new Date(booking.slot.end_time).toLocaleTimeString('en-US', {
+																hour: '2-digit',
+																minute: '2-digit',
+																timeZone: booking.slot.timezone
+															})}
+															({booking.slot.timezone})
+														</div>
+													</td>
+													<td>
+														<a
+															class="btn btn-info"
+															on:click={() => {
+																startChatRoom(booking.slot);
+															}}>Enter Meeting</a
+														>
+														<div
+															class="btn btn-outline-danger"
+															on:click={() => dropOutOfMeeting(booking)}
+														>
+															<div class="fa fa-times"></div>
+														</div>
+													</td>
+												</tr>
+											{/each}
+										</tbody>
+									</table>
+								</div>
+							{:else}
+								<p class="text-muted mb-0">No Upcoming Meetings...</p>
+							{/if}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{/if}
 
 		<!-- Approved Menteeships -->
 		{#if false}
